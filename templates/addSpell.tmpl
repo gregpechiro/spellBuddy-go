@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Setup</title>
+		{{ template "head.tmpl" }}
+		<link rel="stylesheet" href="/static/css/setup.css" charset="utf-8">
+	</head>
+	<body>
+        {{ template "nav.tmpl" }}
+        <div class="container">
+            {{ template "alerts.tmpl" . }}
+			<div class="col-lg-12">
+				<form class="form-horizontal" action="/add/spell" method="post">
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label col-lg-3">Area</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="area" value="" placeholder="Area">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Descriptors</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="descriptors" value="" placeholder="Descriptors">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Duration</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="duration" value="" placeholder="Duration">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Effect</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="effect" value="" placeholder="Effect">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Name</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="name" value="" placeholder="Name">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Rulebook</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="rulebook" value="" placeholder="Rulebook">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Page</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="page" value="" placeholder="Page">
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label col-lg-3">Saving Throw</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="savingThrow" value="" placeholder="Saving Throw">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">School</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="school" value="" placeholder="School">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Spell Range</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="spellRange" value="" placeholder="Spell Range">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Spell Resistance</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="spellResistance" value="" placeholder="Spell resistance">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Subschool</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="subSchool" value="" placeholder="Subschool">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Target</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="target" value="" placeholder="Target">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Casting Time</label>
+								<div class="col-lg-9">
+									<input class="form-control" type="text" name="castingTime" value="" placeholder="Casting Time">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<legend>Spell Components</legend>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label col-lg-3">Arcane Focus</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="arcaneFocusComponent" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="arcaneFocusComponent" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Currupt</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="corruptComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="corruptComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Divine Focus</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="divineFocusComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="divineFocusComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Material</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="materialComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="materialComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Meta Breath</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="metaBreathComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="metaBreathComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group">
+								<label class="control-label col-lg-3">Somatic</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="somaticComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="somaticComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">True Name</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="trueNameComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="trueNameComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">Verbal</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="verbalComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="verbalComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-lg-3">XP</label>
+								<div class="col-lg-9">
+									<label class="radio-inline">
+										<input type="radio" name="xPComponent" id="" value="true"> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="xPComponent" id="" value="false"> No
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<legend>Description</legend>
+					<div class="col-lg-12">
+						<div class="form-group">
+							<textarea name="descriptionHtml" class="form-control" style="resize: none;" rows="10"></textarea>
+						</div>
+					</div>
+					<button class="btn btn-primary">Save</button>
+				</form>
+			</div>
+        </div>
+		<br><br>
+
+
+        {{ template "scripts.tmpl" }}
+		<script src="/static/js/picked.js" charset="utf-8"></script>
+		<script src="/static/js/allSpells.js" charset="utf-8"></script>
+	</body>
+</html>

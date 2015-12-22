@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Admin</title>
+		{{ template "head.tmpl" }}
+	</head>
+	<body>
+        <div id="navbar" class="navbar navbar-default navbar-static-top navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#/">Spell Buddy</a>
+                </div>
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+			{{ template "alerts.tmpl" . }}
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            User
+                            <a href="/admin" class="pull-right">Clear</a>
+                        </div>
+                        <div class="panel-body">
+							<form action="{{ if .user }}/saveUser/{{ .user.Id }}{{ else }}/addUser{{ end }}" method="post">
+								<div class="form-group">
+	                                <input name="name" type="text" class="form-control" placeholder="Name" value="{{ if .user }}{{ .user.Data.Name }}{{ end }}">
+	                            </div>
+	                            <div class="form-group">
+	                                <input name="username" type="text" class="form-control" placeholder="Username" value="{{ if .user }}{{ .user.Data.Username }}{{ end }}">
+	                            </div>
+	                            <div class="form-group">
+	                                <input name="password" type="text" class="form-control" placeholder="Password" value="{{ if .user }}{{ .user.Data.Password }}{{ end }}">
+	                            </div>
+	                            <label>Power Points</label>
+	                            <div class="form-group row">
+	                                <div class="col-xs-2">
+	                                    <div class="radio">
+	                                        <label><input name="powerPoints" type="radio" value="true" {{ if .user.Data.PowerPoints}}checked{{ end }}>Yes</label>
+	                                    </div>
+	                                </div>
+	                                <div class="col-xs-2">
+	                                    <div class="radio">
+	                                        <label><input name="powerPoints" type="radio" value="false" {{ if .user }}{{ if eq .user.Data.PowerPoints false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <label>Active</label>
+	                            <div class="form-group row">
+	                                <div class="col-xs-2">
+	                                    <div class="radio">
+	                                        <label><input name="active" type="radio" value="true" {{ if .user.Data.Active}}checked{{ end }}>Yes</label>
+	                                    </div>
+	                                </div>
+	                                <div class="col-xs-2">
+	                                    <div class="radio">
+	                                        <label><input name="active" type="radio" value="false" {{ if .user }}{{ if eq .user.Data.Active false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <label>Role</label>
+	                            <div class="form-group">
+	                                <select name="role" class="form-control">
+	                                    <option value="USER">User</option>
+	                                    <option value="ADMIN">Admin</option>
+	                                </select>
+	                            </div>
+	                            <button class="btn btn-primary btn-block">Save</button>
+							</form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Users
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Active</th>
+                                        <th>Role</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+									{{ range $user := .users }}
+                                    	<tr>
+                                        	<td>{{ $user.Id }}</td>
+                                        	<td>{{ $user.Data.Name }}</td>
+                                        	<td>{{ $user.Data.Username }}</td>
+                                        	<td>{{ $user.Data.Password }}</td>
+                                        	<td>{{ $user.Data.Active }}</td>
+                                        	<td>{{ $user.Data.Role }}</td>
+                                        	<td><a href="/admin/{{ $user.Id }}">Edit</a></td>
+                                        	<td><a href="#" data-delete="/delUser/{{ $user.Id }}" data-message="Are you sure you would like to permanently delete this user?" class="text-danger delete-button">Delete</a></td>
+                                    	</tr>
+									{{ end }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		{{ template "scripts.tmpl" }}
+		<script src="/static/js/delete.js" charset="utf-8"></script>
+	</body>
+</html>

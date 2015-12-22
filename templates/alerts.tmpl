@@ -1,0 +1,25 @@
+<!-- delete object alert -->
+<div id="deleteAlert" class="alert alert-danger clearfix hide">
+    <form id="deleteForm" action="" method="post" class="col-lg-2">
+        <button id="delete" class="btn btn-danger btn-sm">Yes</button>
+        <a id="deleteCancel" class="btn btn-default btn-sm">No</a>
+    </form>
+    <span id="message"></span>
+</div>
+<!-- other alerts -->
+{{ if .alert }}
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ .alert }}
+    </div>
+{{ else if .alertError }}
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ .alertError }}
+    </div>
+{{ else if .alertSuccess }}
+    <div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ .alertSuccess }}
+    </div>
+{{ end }}

@@ -1,0 +1,22 @@
+span.label-default {
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 0px;
+    border: 1px solid #ddd;
+    color: #337ab7;
+}
+
+span.label-default:hover {
+    color: #23527c;
+    background-color: #eee;
+    border: 1px solid #ddd;
+}
+
+span.label-primary {
+    border-radius: 0px;
+    border: 1px solid #337ab7;
+}
+
+.pagination {
+    margin: 0;
+}
