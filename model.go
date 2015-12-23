@@ -18,6 +18,12 @@ type SpellSetup struct {
 	PreparedSpells  [][]float64
 }
 
+type PowerPointsSetup struct {
+	UserId               float64
+	TotalPowerPoints     int
+	RemainingPowerPoints int
+}
+
 type Spell struct {
 	Area                 string
 	CastingTime          string

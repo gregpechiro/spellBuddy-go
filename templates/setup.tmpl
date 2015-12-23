@@ -13,50 +13,51 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel-group" id="spdAccordion" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default" ng-if="!user.powerPoints">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#spdAccordion" href="#" data-target="#spdCollapse">
-                                        Spells Per Day Click to Edit
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="spdCollapse" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <form name="spdForm" action="/user/spd" method="post">
-                                        {{ range $level, $spd := .setup.Data.SpellsPerDay }}
-                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
-                                                <div class="form-group">
-                                                    <label>Level {{ $level }}</label>
-                                                    <input type="number" min=0 class="form-control"  name="level-{{ $level }}" placeholder="Level {{ $level }}" required="true" value="{{ $spd }}">
-                                                </div>
-                                            </div>
-                                        {{ end }}
+						{{ if .user.Data.PowerPoints}}
+							<div class="panel panel-default">
+								<div class="panel-heading clearfix">
+									<form class="form-horizontal" action="/user/pp" method="post">
+										<label for="pp" class="col-lg-2 control-label">Total Power Points</label>
+										<div class="col-lg-2">
+											<input type="number" name="totalPP" class="form-control" placeholder="Power Points" value="{{ .setup.Data.TotalPowerPoints }}">
+										</div>
 										<input type="hidden" name="userId" value="{{ .user.Id }}">
 										<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-                                    	<div class="col-lg-offset-1 col-lg-10">
-                                        	<button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#spdCollapse">Save</button>
-                                    	</div>
+										<button class="btn btn-default">Save</button>
 									</form>
-                                </div>
-                            </div>
-                        </div>
+								</div>
+							</div>
+						{{ else }}
+	                        <div class="panel panel-default" ng-if="!user.powerPoints">
+	                            <div class="panel-heading">
+	                                <h4 class="panel-title">
+	                                    <a data-toggle="collapse" data-parent="#spdAccordion" href="#" data-target="#spdCollapse">
+	                                        Spells Per Day Click to Edit
+	                                    </a>
+	                                </h4>
+	                            </div>
+	                            <div id="spdCollapse" class="panel-collapse collapse">
+	                                <div class="panel-body">
+	                                    <form name="spdForm" action="/user/spd" method="post">
+	                                        {{ range $level, $spd := .setup.Data.SpellsPerDay }}
+	                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
+	                                                <div class="form-group">
+	                                                    <label>Level {{ $level }}</label>
+	                                                    <input type="number" min=0 class="form-control"  name="level-{{ $level }}" placeholder="Level {{ $level }}" required="true" value="{{ $spd }}">
+	                                                </div>
+	                                            </div>
+	                                        {{ end }}
+											<input type="hidden" name="userId" value="{{ .user.Id }}">
+											<input type="hidden" name="setupId" value="{{ .setup.Id }}">
+	                                    	<div class="col-lg-offset-1 col-lg-10">
+	                                        	<button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#spdCollapse">Save</button>
+	                                    	</div>
+										</form>
+	                                </div>
+	                            </div>
+	                        </div>
+						{{ end }}
                     </div>
-                    {{ if .user.Data.powerPoints }}
-                        <div class="panel panel-default">
-                            <div class="panel-heading clearfix">
-                                <div class="form-horizontal">
-                                    <div class="form-group">
-                                        <label for="pp" class="col-lg-2 control-label">Total Power Points</label>
-                                        <div class="col-lg-2">
-                                            <input type="number" class="form-control" placeholder="Power Points">
-                                        </div>
-                                        <a class="btn btn-default">Save</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {{ end }}
                 </div>
             </div>
 

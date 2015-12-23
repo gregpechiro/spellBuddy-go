@@ -72,10 +72,13 @@ func main() {
 	db.AddStore("spell")
 	db.AddStore("user")
 	db.AddStore("spell-setup")
+	db.AddStore("pp-setup")
 
 	mux.AddRoutes(login, loginPost, logout)
 	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells)
-	mux.AddSecureRoutes(USER, home, setup, addSpellToUser, delSpellFromUser, changeLvl, spellsPerDay, rest, cast, addSpell, saveSpell)
+	mux.AddSecureRoutes(USER, home, setup, addSpell, saveSpell)
+	mux.AddSecureRoutes(USER, addSpellToUser, delSpellFromUser, changeLvl, spellsPerDay, rest, cast)
+	mux.AddSecureRoutes(USER, pp, ppRest, ppCast)
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -163,7 +166,14 @@ var addUser = web.Route{"POST", "/addUser", func(w http.ResponseWriter, r *http.
 		},
 	}
 	userId := db.Add("user", user)
-	if !user.PowerPoints {
+	if user.PowerPoints {
+		ppSetup := PowerPointsSetup{
+			UserId:               userId,
+			TotalPowerPoints:     0,
+			RemainingPowerPoints: 0,
+		}
+		db.Add("pp-setup", ppSetup)
+	} else {
 		spellSetup := SpellSetup{
 			UserId:          userId,
 			SpellsPerDay:    []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -295,12 +305,22 @@ var modifiySpells = web.Route{"GET", "/mod/spell", func(w http.ResponseWriter, r
 var home = web.Route{"GET", "/", func(w http.ResponseWriter, r *http.Request) {
 	userId := ParseId(web.GetSess(r, "id"))
 	var user User
-	db.Get("user", userId).As(&user)
+	uDoc := db.Get("user", userId)
+	uDoc.As(&user)
+	if user.PowerPoints {
+		tmpl.Render(w, r, "pp-home.tmpl", web.Model{
+			"user":   uDoc,
+			"setup":  db.Query("pp-setup", dbdb.Eq{"UserId", userId}).One(),
+			"picked": getPicked(user.Picked),
+		})
+		return
+	}
 	tmpl.Render(w, r, "home.tmpl", web.Model{
-		"user":   db.Get("user", userId),
+		"user":   uDoc,
 		"setup":  db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One(),
 		"picked": getPicked(user.Picked),
 	})
+	return
 }}
 
 var rest = web.Route{"POST", "/rest", func(w http.ResponseWriter, r *http.Request) {
@@ -319,6 +339,23 @@ var rest = web.Route{"POST", "/rest", func(w http.ResponseWriter, r *http.Reques
 	copy(spellSetup.RemainingSpells, spellSetup.SpellsPerDay)
 	copy(spellSetup.PreparedSpells, prepared)
 	db.Set("spell-setup", setupId, spellSetup)
+	http.Redirect(w, r, "/", 303)
+	return
+}}
+
+var ppRest = web.Route{"POST", "/pp-rest", func(w http.ResponseWriter, r *http.Request) {
+	userId := ParseId(web.GetSess(r, "id"))
+	setupId := ParseId(r.FormValue("setupId"))
+	var ppSetup PowerPointsSetup
+	db.Get("pp-setup", setupId).As(&ppSetup)
+	if ppSetup.UserId != userId {
+		fmt.Println("userId: ", userId)
+		fmt.Println("spellId: ", setupId)
+		web.SetErrorRedirect(w, r, "/", "Error Resting")
+		return
+	}
+	ppSetup.RemainingPowerPoints = ppSetup.TotalPowerPoints
+	db.Set("pp-setup", setupId, ppSetup)
 	http.Redirect(w, r, "/", 303)
 	return
 }}
@@ -342,6 +379,25 @@ var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Reques
 
 }}
 
+var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.Request) {
+	userId := ParseId(web.GetSess(r, "id"))
+	setupId := ParseId(r.FormValue("setupId"))
+	pp, err := strconv.Atoi(r.FormValue("pp"))
+	var ppSetup PowerPointsSetup
+	db.Get("pp-setup", setupId).As(&ppSetup)
+	if ppSetup.UserId != userId || err != nil || pp < 0 || pp > ppSetup.TotalPowerPoints {
+		log.Printf("ppCast() >> strconv.Atoi(): %v\n", err)
+		fmt.Println("userId: ", userId)
+		fmt.Println("setup userId: ", ppSetup.UserId)
+		web.SetErrorRedirect(w, r, "/", "Error casting")
+		return
+	}
+	ppSetup.RemainingPowerPoints -= pp
+	db.Set("pp-setup", setupId, ppSetup)
+	http.Redirect(w, r, "/", 303)
+	return
+
+}}
 var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Request) {
 	userId := ParseId(web.GetSess(r, "id"))
 	var user User
@@ -355,13 +411,18 @@ var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Reque
 		spells = db.Query("spell", dbdb.Eq{"Custom", false})
 		spellType = ""
 	}
+	var setup *dbdb.Doc
+	if user.PowerPoints {
+		setup = db.Query("pp-setup", dbdb.Eq{"UserId", userId}).One()
+	} else {
+		setup = db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
+	}
 	tmpl.Render(w, r, "setup.tmpl", web.Model{
 		"picked":    getPickedNames(user.Picked),
 		"user":      db.Get("user", userId),
-		"setup":     db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One(),
+		"setup":     setup,
 		"spells":    spells,
 		"spellType": spellType,
-		"letters":   []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"},
 	})
 }}
 
@@ -380,6 +441,22 @@ var spellsPerDay = web.Route{"POST", "/user/spd", func(w http.ResponseWriter, r 
 	}
 	db.Set("spell-setup", setupId, spellSetup)
 	web.SetSuccessRedirect(w, r, "/setup", "Successfully updated spells per day")
+	return
+}}
+
+var pp = web.Route{"POST", "/user/pp", func(w http.ResponseWriter, r *http.Request) {
+	userId := ParseId(r.FormValue("userId"))
+	setupId := ParseId(r.FormValue("setupId"))
+	var ppSetup PowerPointsSetup
+	db.Get("pp-setup", setupId).As(&ppSetup)
+	if userId != ppSetup.UserId {
+		web.SetErrorRedirect(w, r, "/setup", "Error updating total power points")
+		return
+	}
+	totalPP, _ := strconv.Atoi(r.FormValue("totalPP"))
+	ppSetup.TotalPowerPoints = totalPP
+	db.Set("pp-setup", setupId, ppSetup)
+	web.SetSuccessRedirect(w, r, "/setup", "Successfully updated total power points")
 	return
 }}
 

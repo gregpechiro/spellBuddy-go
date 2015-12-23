@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title></title>
+		{{ template "head.tmpl" }}
+
+	</head>
+	<body>
+			{{ template "nav.tmpl" . }}
+        <div class="container">
+			{{ template "alerts.tmpl" . }}
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                Power Points
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="text-center">
+                                <label>Total Power Points: </label>{{ .setup.Data.TotalPowerPoints }}<br>
+                                <label>Remaining Power Points: </label>{{ .setup.Data.RemainingPowerPoints }}
+                            </div>
+                            <div class="col-lg-offset-1 col-lg-10">
+								<form action="/pp-rest" method="post">
+									<input type="hidden" name="userId" value="{{ .user.Id }}">
+									<input type="hidden" name="setupId" value="{{ .setup.Id }}">
+                                	<button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#prepareCollapse">Rest</button>
+								</form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-10">
+                    <div class="panel-group" id="spellsAccordion" role="tablist" aria-multiselectable="true">
+						{{ $setup := .setup}}
+						{{ range $level, $spells := .picked }}
+							{{ $len := len $spells }}
+							{{ if gt $len 0 }}
+		                        <div class="panel panel-default">
+		                            <div class="panel-heading" >
+		                                <h4 class="panel-title">
+		                                    <a data-toggle="collapse" data-parent="#spellsAccordion" data-target="#level-{{ $level }}-colapse" style="cursor:pointer;">
+		                                        Level {{ $level }} Spells
+		                                    </a>
+		                                </h4>
+		                            </div>
+		                            <div id="level-{{ $level }}-colapse" class="panel-collapse collapse">
+										<div class="panel-body">
+				                            <div class="panel-group" id="level-{{ $level }}-accordian" role="tablist">
+												{{ range $spell := $spells}}
+					                                <div class="panel panel-default" >
+					                                    <div class="panel-heading" role="tab" id="heading-{{ $level }}-inner">
+					                                        <h4 class="panel-title clearfix">
+					                                            <a data-toggle="collapse" class="col-lg-6" data-parent="#level-{{ $level }}-accordian" data-target="#spell-{{ $level }}-{{ $spell.Id }}-colapse" style="cursor:pointer;">
+					                                                {{ $spell.Data.Name }}
+					                                            </a>
+																<form class="pull-right col-lg-4" action="/pp-cast" method="post">
+																	<input type="hidden" name="setupId" value="{{ $setup.Id }}">
+                                                                	<div class="input-group input-group-sm">
+                                                                    	<input type="text" name="pp" class="form-control" placeholder="Points">
+                                                                    	<span class="input-group-btn">
+                                                                        	<button class="btn btn-default" {{if lt $setup.Data.RemainingPowerPoints 1.0 }}disabled="disabled"{{ end }}>Cast</button>
+                                                                    	</span>
+                                                                	</div>
+																</form>
+					                                        </h4>
+					                                    </div>
+					                                    <div id="spell-{{ $level }}-{{ $spell.Id }}-colapse" class="panel-collapse collapse">
+					                                        <div class="panel-body">
+					                                            <h4>{{ $spell.Data.School }}
+																	{{ if $spell.Data.Subschool }}<span> ({{ $spell.Data.Subschool }})</span>{{ end }}
+																	{{ if $spell.Data.Descriptors }}<span> [{{ $spell.Data.Descriptors }}]</span>{{ end }}
+																</h4>
+					                                            <p>
+					                                                {{ $spell.Data.Rulebook }}{{ if $spell.Data.Page  }}<span> p. {{ $spell.Data.Page }}</span>{{ end }}
+					                                            </p>
+					                                            <table>
+					                                                <tbody>
+					                                                    {{ if $spell.Data.CastingTime }}<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Components }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.CastingTime }}<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.CastingTime }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.SpelRange }}<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SpellRange }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.Area }}<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Area }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.Effect }}<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Effect }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.Target }}<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Target }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.Duration }}<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Duration }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.SavingThrow }}<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SavingThrow }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.SpellResistance }}<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SpellResistance }}</td></tr>{{ end }}
+					                                                </tbody>
+					                                            </table>
+					                                            <br>
+					                                            <span>{{ $spell.Data.DescriptionHtml }}</span>
+					                                        </div>
+					                                    </div>
+					                                </div>
+												{{ end }}
+				                            </div>
+				                        </div>
+		                            </div>
+		                        </div>
+							{{ end }}
+						{{ end }}
+                    </div>
+                </div>
+            </div>
+        </div>
+		{{ template "scripts.tmpl" }}
+		<script src="/static/js/util.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			var prepared = {{ if .setup.Data.PreparedSpells }}{{ json .setup.Data.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
+			var spd = {{ if .setup.Data.SpellsPerDay }}{{ json .setup.Data.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
+			$(document).ready(function() {
+				$('input.prepare').click(function() {
+					level =+ $(this).attr('data-level');
+					spellId =+ $(this).attr('data-spell-id');
+					if (this.checked) {
+						prepared[level].push(spellId);
+						console.log(prepared[level].length == spd[level]);
+						if (prepared[level].length == spd[level]) {
+							cboxes = $('input.prepare-' + level);
+							for (var i = 0; i < cboxes.length; i++) {
+								if (!cboxes[i].checked) {
+									$(cboxes[i]).attr('disabled', 'disabled');
+								}
+							}
+						}
+					} else {
+						prepared[level] = removeValue(prepared[level], spellId);
+						if (prepared[level].length < spd[level]) {
+							$('input.prepare-' + level).removeAttr('disabled');
+						}
+					}
+				});
+				$('button#rest').click(function(e) {
+					e.preventDefault();
+					$('input[name="prepared"]').val(JSON.stringify(prepared));
+					console.log($('input[name="prepared"]').val());
+					$('form#rest').submit();
+				});
+			});
+		</script>
+	</body>
+</html>
