@@ -51,5 +51,6 @@ type Spell struct {
 	VerbalComponent      bool
 	XPComponent          bool
 	Custom               bool
+	Public               bool
 	UserId               float64
 }

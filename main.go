@@ -76,7 +76,7 @@ func main() {
 
 	mux.AddRoutes(login, loginPost, logout)
 	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells)
-	mux.AddSecureRoutes(USER, home, setup, addSpell, saveSpell)
+	mux.AddSecureRoutes(USER, home, setup, addSpell, saveSpell, editSpell)
 	mux.AddSecureRoutes(USER, addSpellToUser, delSpellFromUser, changeLvl, spellsPerDay, rest, cast)
 	mux.AddSecureRoutes(USER, pp, ppRest, ppCast)
 
@@ -94,8 +94,6 @@ var loginPost = web.Route{"POST", "/login", func(w http.ResponseWriter, r *http.
 		return
 	}
 	docs := db.Query("user", dbdb.Eq{"Username", r.FormValue("username")}, dbdb.Eq{"Password", r.FormValue("password")}, dbdb.Eq{"Active", true})
-
-	// TODO: Fix .As boolean
 
 	if len(docs) == 1 {
 		var user User
@@ -398,18 +396,24 @@ var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.R
 	return
 
 }}
+
 var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Request) {
 	userId := ParseId(web.GetSess(r, "id"))
 	var user User
 	db.Get("user", userId).As(&user)
-	var spellType string
+	var spellCat string
 	var spells dbdb.DocSorted
-	if r.FormValue("type") == "custom" {
-		spells = db.Query("spell", dbdb.Eq{"Custom", true})
-		spellType = "custom"
+	cat := r.FormValue("cat")
+
+	if cat == "allc" {
+		spells = db.Query("spell", dbdb.Eq{"Custom", true}, dbdb.Eq{"Public", true})
+		spellCat = "allC"
+	} else if cat == "userc" {
+		spells = db.Query("spell", dbdb.Eq{"UserId", userId})
+		spellCat = "userC"
 	} else {
 		spells = db.Query("spell", dbdb.Eq{"Custom", false})
-		spellType = ""
+		spellCat = "dndtool"
 	}
 	var setup *dbdb.Doc
 	if user.PowerPoints {
@@ -418,11 +422,11 @@ var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Reque
 		setup = db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
 	}
 	tmpl.Render(w, r, "setup.tmpl", web.Model{
-		"picked":    getPickedNames(user.Picked),
-		"user":      db.Get("user", userId),
-		"setup":     setup,
-		"spells":    spells,
-		"spellType": spellType,
+		"picked":   getPickedNames(user.Picked),
+		"user":     db.Get("user", userId),
+		"setup":    setup,
+		"spells":   spells,
+		"spellCat": spellCat,
 	})
 }}
 
@@ -595,9 +599,32 @@ var addSpell = web.Route{"GET", "/add/spell", func(w http.ResponseWriter, r *htt
 	tmpl.Render(w, r, "addSpell.tmpl", web.Model{})
 }}
 
-var saveSpell = web.Route{"POST", "/add/spell", func(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+var editSpell = web.Route{"GET", "/edit/spell/:id", func(w http.ResponseWriter, r *http.Request) {
+	userId := ParseId(web.GetSess(r, "id"))
+	spellId := ParseId(r.FormValue(":id"))
+	if spellId < 1 {
+		web.SetErrorRedirect(w, r, "/setup?userc", "Invalid Spell")
+		return
+	}
 	var spell Spell
+	db.Get("spell", spellId).As(&spell)
+	if spell.UserId != userId || !spell.Custom {
+		web.SetErrorRedirect(w, r, "/setup?userc", "Cannot edit spell")
+		return
+	}
+	tmpl.Render(w, r, "addSpell.tmpl", web.Model{
+		"spell":   spell,
+		"spellId": spellId,
+	})
+	return
+}}
+
+var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	spellId := ParseId(r.FormValue("id"))
+	userId := ParseId(web.GetSess(r, "id"))
+	var spell Spell
+	db.Get("spell", spellId).As(&spell)
 	FormToStruct(&spell, r.Form, "")
 	c := []string{}
 	if spell.ArcaneFocusComponent {
@@ -627,11 +654,21 @@ var saveSpell = web.Route{"POST", "/add/spell", func(w http.ResponseWriter, r *h
 	if spell.XPComponent {
 		c = append(c, "XP")
 	}
-	spell.Custom = true
 	spell.Components = strings.Join(c, " ")
-	spell.UserId = ParseId(web.GetSess(r, "id"))
-	db.Add("spell", spell)
-	web.SetSuccessRedirect(w, r, "/setup?custom", "Successfully added spell")
+	if spellId != 0 {
+		if spell.UserId != userId {
+			web.SetErrorRedirect(w, r, "/setup/?cat=userc", "Cannot save spell")
+			fmt.Printf("Spell: %v\n", spell)
+			fmt.Printf("UserId: %v\n", userId)
+			return
+		}
+		db.Set("spell", spellId, spell)
+	} else {
+		spell.UserId = userId
+		spell.Custom = true
+		db.Add("spell", spell)
+	}
+	web.SetSuccessRedirect(w, r, "/setup?cat=userc", "Successfully saved spell")
 	return
 }}
 

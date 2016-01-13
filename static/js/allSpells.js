@@ -68,8 +68,9 @@ function genResults(filteredSpells) {
                         '<a data-toggle="collapse" data-parent="#dndSpellAccordion" data-target="#dndSpell' + doc.id + '" style="cursor:pointer;">'+
                             doc.data.Name +
                         '</a>'+
-                        '<form class="addSpell col-lg-4 pull-right">' +
-                            '<div class="input-group pull-right input-group-sm">'+
+                        '<form class="addSpell col-lg-6 pull-right">' +
+                            ((doc.data.Custom && cat == 'userC') ? '<div class="col-lg-2 pull-right"><a href="/edit/spell/' + doc.id + '" class="btn btn-sm btn-primary">Edit</a></div>' : '') +
+                            '<div class="input-group pull-right input-group-sm col-lg-10">'+
                                 '<input type="text" name="spellLvl" class="form-control" placeholder="Level">'+
                                 '<span class="input-group-btn">'+
                                     '<button class="btn btn-default">Add Spell</button>'+
@@ -161,8 +162,8 @@ function genLetters() {
     var m = {};
     var lets = [];
     for (var i = 0; i < spells.length; i++) {
-        var letter = spells[i].data.Name[0].toLowerCase();
-        m[letter] = '';
+        var l = spells[i].data.Name[0].toLowerCase();
+        m[l] = '';
     }
     for (letter in m) {
         lets.push(letter);
@@ -174,7 +175,6 @@ function genLetters() {
     test = lets
     for (var i = 0; i < lets.length; i++) {
         s = $('<span class="label ' + ((lets[i] == letter) ? 'label-primary' : 'label-default') + ' letter" data-let="' + lets[i] + '">' + lets[i].toUpperCase() + '</span>');
-        console.log(s);
         $('div#letters').append(s);
     }
 }
