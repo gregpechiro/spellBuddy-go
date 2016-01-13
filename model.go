@@ -9,6 +9,7 @@ type User struct {
 	LastSeen    int64
 	PowerPoints bool
 	Picked      [][]float64
+	Theme       string
 }
 
 type SpellSetup struct {

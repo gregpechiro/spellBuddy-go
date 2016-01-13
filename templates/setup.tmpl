@@ -2,8 +2,7 @@
 <html>
 	<head>
 		<title>Setup</title>
-		{{ template "head.tmpl" }}
-		<link rel="stylesheet" href="/static/css/setup.css" charset="utf-8">
+		{{ template "head.tmpl" . }}
 	</head>
 	<body>
         {{ template "nav.tmpl" }}
@@ -37,7 +36,7 @@
 	                                </h4>
 	                            </div>
 	                            <div id="spdCollapse" class="panel-collapse collapse">
-	                                <div class="panel-body">
+	                                <div class="panel-body setup-panel">
 	                                    <form name="spdForm" action="/user/spd" method="post">
 	                                        {{ range $level, $spd := .setup.Data.SpellsPerDay }}
 	                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">

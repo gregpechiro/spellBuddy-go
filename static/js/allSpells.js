@@ -82,7 +82,7 @@ function genResults(filteredSpells) {
                     '</h4>'+
                 '</div>'+
                 '<div id="dndSpell' + doc.id + '" class="panel-collapse collapse">'+
-                    '<div class="panel-body">' +
+                    '<div class="panel-body description-panel">' +
                         '<h4>' + doc.data.School +
                             ((doc.data.Subschool != '') ? '<span> (' + doc.data.Subschool + ')</span>' : '') +
                             ((doc.data.Descriptors != '') ? '<span> [' + doc.data.Descriptors + ']</span>' : '') +

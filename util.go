@@ -1,11 +1,75 @@
 package main
 
 import (
+	"log"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
 )
+
+func Ternary(comp bool, v, w interface{}) interface{} {
+	if comp {
+		return v
+	}
+	return w
+}
+
+func getPicked(userP [][]float64) [][]interface{} {
+	var picked [][]interface{}
+	if userP != nil {
+		pickedLvl := []interface{}{}
+		for _, lvl := range userP {
+			pickedLvl = []interface{}{}
+			if len(lvl) > 0 {
+				for _, spellId := range lvl {
+					pickedLvl = append(pickedLvl, db.Get("spell", spellId))
+				}
+			}
+			picked = append(picked, pickedLvl)
+		}
+	}
+	return picked
+}
+
+func getPickedNames(userP [][]float64) [][]string {
+	var picked [][]string
+	if userP != nil {
+		pickedLvl := []string{}
+		for _, lvl := range userP {
+			pickedLvl = []string{}
+			if len(lvl) > 0 {
+				for _, spellId := range lvl {
+					pickedLvl = append(pickedLvl, db.Get("spell", spellId).Data["Name"].(string))
+				}
+			}
+			picked = append(picked, pickedLvl)
+		}
+	}
+	return picked
+}
+
+func GetBool(s string) bool {
+	b, _ := strconv.ParseBool(s)
+	return b
+}
+
+func ParseId(v interface{}) float64 {
+	var id float64
+	var err error
+	switch v.(type) {
+	case string:
+		id, err = strconv.ParseFloat(v.(string), 64)
+		if err != nil {
+			log.Printf("ParseId() >> strconv.ParseFloat(): ", err)
+		}
+	case uint64:
+		id = float64(v.(uint64))
+	case float64:
+		id = v.(float64)
+	}
+	return id
+}
 
 func ToLowerFirst(s string) string {
 	return strings.ToLower(string(s[0])) + s[1:len(s)]

@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<title></title>
-		{{ template "head.tmpl" }}
+		{{ template "head.tmpl" . }}
 
 	</head>
 	<body>
@@ -97,7 +97,7 @@
 		                                </h4>
 		                            </div>
 		                            <div id="level-{{ $level }}-colapse" class="panel-collapse collapse">
-										<div class="panel-body">
+										<div class="panel-body level-panel">
 				                            <div class="panel-group" id="level-{{ $level }}-accordian" role="tablist">
 												{{ range $spell := $spells}}
 					                                <div class="panel panel-default" ng-repeat="s in levelsSpells">
@@ -118,7 +118,7 @@
 					                                        </h4>
 					                                    </div>
 					                                    <div id="spell-{{ $level }}-{{ $spell.Id }}-colapse" class="panel-collapse collapse">
-					                                        <div class="panel-body">
+					                                        <div class="panel-body spell-panel">
 					                                            <h4>{{ $spell.Data.School }}
 																	{{ if $spell.Data.Subschool }}<span> ({{ $spell.Data.Subschool }})</span>{{ end }}
 																	{{ if $spell.Data.Descriptors }}<span> [{{ $spell.Data.Descriptors }}]</span>{{ end }}

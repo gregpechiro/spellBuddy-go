@@ -16,7 +16,7 @@ function renderPicked() {
                 '</div>' +
             '</div>');
             for (var j = 0; j < picked[i].length; j++) {
-                var spell = $('<li class="list-group-item clearfix">' +
+                var spell = $('<li class="list-group-item clearfix picked-li">' +
                     picked[i][j] +
                     '<div class="input-group pull-right col-lg-6 input-group-sm">' +
                         '<input id="change-' + i + '-' + j + '" type="text" class="form-control" placeholder="Level">' +
