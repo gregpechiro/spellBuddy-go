@@ -22,8 +22,11 @@ function paginate(dataSet) {
 function generatePaginator(lb, ub, pages) {
     var paginator = $('#paginator');
     paginator.html('');
-    var prev = $('<li id="prev"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span</a></li>');
-    var next = $('<li id="next"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>');
+    if (pages < 2) {
+        return
+    }
+    var prev = $('<li id="prev"><a aria-label="Previous" style="cursor:pointer;"><span aria-hidden="true">&laquo;</span</a></li>');
+    var next = $('<li id="next"><a aria-label="Next" style="cursor:pointer;"><span aria-hidden="true">&raquo;</span></a></li>');
     if (page == 0) {
         prev.addClass('disabled');
     }
@@ -142,8 +145,8 @@ function setSpellSet() {
 }
 
 function orderDoc(doc1, doc2) {
-    name1 = doc1.data.Name.toLowerCase();
-    name2 = doc2.data.Name.toLowerCase();
+    var name1 = doc1.data.Name.toLowerCase();
+    var name2 = doc2.data.Name.toLowerCase();
     if (name1 < name2) {
         return -1;
     }
@@ -154,7 +157,7 @@ function orderDoc(doc1, doc2) {
 }
 
 function filterLetter(doc) {
-    name = doc.data.Name.toLowerCase()
+    var name = doc.data.Name.toLowerCase();
     return name.startsWith(letter);
 }
 
@@ -172,7 +175,6 @@ function genLetters() {
     if (lets.length > 0) {
         letter = lets[0];
     }
-    test = lets
     for (var i = 0; i < lets.length; i++) {
         s = $('<span class="label ' + ((lets[i] == letter) ? 'label-primary' : 'label-default') + ' letter" data-let="' + lets[i] + '">' + lets[i].toUpperCase() + '</span>');
         $('div#letters').append(s);

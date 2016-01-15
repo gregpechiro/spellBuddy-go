@@ -65,6 +65,9 @@
             							<label class="radio-inline">
             								<input type="radio" name="theme" {{if eq .user.Data.Theme "IceMage" }}checked{{end}} value="IceMage"> Ice Mage
             							</label>
+										<label class="radio-inline">
+            								<input type="radio" name="theme" {{if eq .user.Data.Theme "" }}checked{{end}} value=""> None
+            							</label>
                                     </div>
                                 </div>
                                 <button class="btn btn-primary" name="button">Update Theme</button>

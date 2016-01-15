@@ -68,8 +68,8 @@
 					<br>
                     <div class="row">
                         <div class="col-lg-12">
-                            <label>Pages</label>
-                            <label class="pull-right">Pages Size</label>
+                            <label class="outline">Pages</label>
+                            <label class="pull-right outline">Pages Size</label>
                         </div>
                     </div>
                     <div class="row">
@@ -79,7 +79,7 @@
 						<div class="col-lg-3">
 							<a href="/add/spell" class="btn btn-default btn-sm">Add Spell</a>
                             <div class="pull-right">
-                                <select id="pageSize" class="form-control input-sm">
+                                <select id="pageSize" class="form-control input-sm decorated">
                                     <option value="10">10</option>
                                     <option value="20">20</option>
                                     <option value="30">30</option>
@@ -91,12 +91,15 @@
                     </div>
                     <br>
                     <div class="row">
-						<div class="col-lg-12">
+						<div class="col-lg-8">
 							<ul class="nav nav-tabs">
 								<li role="presentation"{{ if eq .spellCat "dndtool" }}class="active"{{end}}><a href="/setup">DNDTools</a></li>
 								<li role="presentation"{{ if eq .spellCat "userC" }}class="active"{{end}}><a href="/setup?cat=userc">My Custom</a></li>
 								<li role="presentation"{{ if eq .spellCat "allC" }}class="active"{{end}}><a href="/setup?cat=allc">All Custom</a></li>
 							</ul>
+						</div>
+						<div class="col-lg-4">
+							<input class="form-control" type="search" id="search" placeholder="Search">
 						</div>
                     </div>
 					<br>
@@ -123,9 +126,11 @@
 			var spellSet = [];
 			var picked = {{ if .picked }}{{ .picked |json }}{{ else }}[]{{ end }};
 			var cat = '{{.spellCat}}';
+			var searchText = '';
 		</script>
 		<script src="/static/js/picked.js" charset="utf-8"></script>
 		<script src="/static/js/allSpells.js" charset="utf-8"></script>
+		<script src="/static/js/search.js" charset="utf-8"></script>
 		<script type="text/javascript">
 
 			$(document).ready(function() {
@@ -144,6 +149,12 @@
 					genResults(paginate(spellSet));
 				});
 				renderPicked();
+
+				$('input#search').on('keyup change', function () {
+					searchText = $('input#search').val().toLowerCase();
+					search();
+				});
+
 			});
 
 		</script>

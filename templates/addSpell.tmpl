@@ -3,7 +3,6 @@
 	<head>
 		<title>Setup</title>
 		{{ template "head.tmpl" . }}
-		<link rel="stylesheet" href="/static/css/setup.css" charset="utf-8">
 	</head>
 	<body>
         {{ template "nav.tmpl" }}
@@ -11,223 +10,232 @@
 			{{ .spellId }}
             {{ template "alerts.tmpl" . }}
 			<div class="col-lg-12">
-				<form class="form-horizontal" action="/save/spell" method="post">
-					<div class="row">
-						<div class="col-lg-6">
-							<div class="form-group">
-								<label class="control-label col-lg-3">Area</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="area" placeholder="Area" {{ if .spell}}value="{{ .spell.Area }}"{{ end }}>
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ if .spell }}Edit{{ else }}Add{{ end }} Spell</div>
+					<div class="panel-body">
+						<form class="form-horizontal" action="/save/spell" method="post">
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="control-label col-lg-4">Area</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="area" placeholder="Area" {{ if .spell}}value="{{ .spell.Area }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Descriptors</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="descriptors" placeholder="Descriptors" {{ if .spell}}value="{{ .spell.Descriptors }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Duration</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="duration" placeholder="Duration" {{ if .spell}}value="{{ .spell.Duration }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Effect</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="effect" placeholder="Effect" {{ if .spell}}value="{{ .spell.Effect }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Name</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="name" placeholder="Name" {{ if .spell}}value="{{ .spell.Name }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Rulebook</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="rulebook" placeholder="Rulebook" {{ if .spell}}value="{{ .spell.Rulebook }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Page</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="page" placeholder="Page" {{ if .spell}}value="{{ .spell.Page }}"{{ end }}>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="control-label col-lg-4">Saving Throw</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="savingThrow" placeholder="Saving Throw" {{ if .spell}}value="{{ .spell.SavingThrow }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">School</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="school" placeholder="School" {{ if .spell}}value="{{ .spell.School }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Spell Range</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="spellRange" placeholder="Spell Range" {{ if .spell}}value="{{ .spell.SpellRange }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Spell Resistance</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="spellResistance" placeholder="Spell resistance" {{ if .spell}}value="{{ .spell.SpellResistance }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Subschool</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="subschool" placeholder="Subschool" {{ if .spell}}value="{{ .spell.Subschool }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Target</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="target" placeholder="Target" {{ if .spell}}value="{{ .spell.Target }}"{{ end }}>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Casting Time</label>
+										<div class="col-lg-8">
+											<input class="form-control" type="text" name="castingTime" placeholder="Casting Time" {{ if .spell}}value="{{ .spell.CastingTime }}"{{ end }}>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Descriptors</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="descriptors" placeholder="Descriptors" {{ if .spell}}value="{{ .spell.Descriptors }}"{{ end }}>
+							<div class="row">
+								<div class="col-lg-12">
+									<legend>Spell Components</legend>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="control-label col-lg-4">Arcane Focus</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="arcaneFocusComponent" value="true" {{ if .spell }}{{ if .spell.ArcaneFocusComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="arcaneFocusComponent" value="false" {{ if.spell }}{{ if eq .spell.ArcaneFocusComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Currupt</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="corruptComponent" id="" value="true" {{ if .spell }}{{ if .spell.CorruptComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="corruptComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.CorruptComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Divine Focus</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="divineFocusComponent" id="" value="true" {{ if .spell }}{{ if .spell.DivineFocusComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="divineFocusComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.DivineFocusComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="control-label col-lg-4">Material</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="materialComponent" id="" value="true" {{ if .spell }}{{ if .spell.MaterialComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="materialComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.MaterialComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Meta Breath</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="metaBreathComponent" id="" value="true" {{ if .spell }}{{ if .spell.MetaBreathComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="metaBreathComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.MetaBreathComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Somatic</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="somaticComponent" id="" value="true" {{ if .spell }}{{ if .spell.SomaticComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="somaticComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.SomaticComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="control-label col-lg-4">True Name</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="trueNameComponent" id="" value="true" {{ if .spell }}{{ if .spell.TrueNameComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="trueNameComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.TrueNameComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">Verbal</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="verbalComponent" id="" value="true" {{ if .spell }}{{ if .spell.VerbalComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="verbalComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.VerbalComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-lg-4">XP</label>
+										<div class="col-lg-8">
+											<label class="radio-inline">
+												<input type="radio" name="xPComponent" id="" value="true" {{ if .spell }}{{ if .spell.XPComponent }}checked{{ end }}{{ end }}> Yes
+											</label>
+											<label class="radio-inline">
+												<input type="radio" name="xPComponent" id="" value="false" {{ if.spell }}{{ if eq .spell.XPComponent false }}checked{{ end }}{{ end }}> No
+											</label>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Duration</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="duration" placeholder="Duration" {{ if .spell}}value="{{ .spell.Duration }}"{{ end }}>
+							<legend>Description</legend>
+							<div class="col-lg-12">
+								<div class="form-group">
+									<textarea name="descriptionHtml" class="form-control" style="resize: none;" rows="10" placeholder="You can use html for styling. No javascript please.">{{ if .spell }}{{ .spell.DescriptionHtml }}{{ end }}</textarea>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Effect</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="effect" placeholder="Effect" {{ if .spell}}value="{{ .spell.Effect }}"{{ end }}>
-								</div>
+							<label class="text-left control-label col-lg-3" style="text-align:left;">Allow others to view this spell</label>
+							<div class="col-lg-2">
+								<label class="radio-inline">
+									<input type="radio" name="public" id="" value="true" {{ if .spell }}{{ if .spell.Public }}checked{{ end }}{{ else }}checked{{ end }}> Yes
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="public" id="" value="false" {{ if .spell }}{{ if eq .spell.Public false }}checked{{ end }}{{ end }}> No
+								</label>
 							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Name</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="name" placeholder="Name" {{ if .spell}}value="{{ .spell.Name }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Rulebook</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="rulebook" placeholder="Rulebook" {{ if .spell}}value="{{ .spell.Rulebook }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Page</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="page" placeholder="Page" {{ if .spell}}value="{{ .spell.Page }}"{{ end }}>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<label class="control-label col-lg-3">Saving Throw</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="savingThrow" placeholder="Saving Throw" {{ if .spell}}value="{{ .spell.SavingThrow }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">School</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="school" placeholder="School" {{ if .spell}}value="{{ .spell.School }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Spell Range</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="spellRange" placeholder="Spell Range" {{ if .spell}}value="{{ .spell.SpellRange }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Spell Resistance</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="spellResistance" placeholder="Spell resistance" {{ if .spell}}value="{{ .spell.SpellResistance }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Subschool</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="subschool" placeholder="Subschool" {{ if .spell}}value="{{ .spell.Subschool }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Target</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="target" placeholder="Target" {{ if .spell}}value="{{ .spell.Target }}"{{ end }}>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Casting Time</label>
-								<div class="col-lg-9">
-									<input class="form-control" type="text" name="castingTime" placeholder="Casting Time" {{ if .spell}}value="{{ .spell.CastingTime }}"{{ end }}>
-								</div>
-							</div>
-						</div>
+							<button class="btn btn-primary">Save</button>
+							{{ if .spell }}
+								<input type="hidden" name="id" value="{{ .spellId }}">
+							{{ end }}
+						</form>
 					</div>
-					<div class="row">
-						<legend>Spell Components</legend>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<label class="control-label col-lg-3">Arcane Focus</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="arcaneFocusComponent" value="true" {{ if .spell.ArcaneFocusComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="arcaneFocusComponent" value="false" {{ if eq .spell.ArcaneFocusComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Currupt</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="corruptComponent" id="" value="true" {{ if .spell.CorruptComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="corruptComponent" id="" value="false" {{ if eq .spell.CorruptComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Divine Focus</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="divineFocusComponent" id="" value="true" {{ if .spell.DivineFocusComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="divineFocusComponent" id="" value="false" {{ if eq .spell.DivineFocusComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Material</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="materialComponent" id="" value="true" {{ if .spell.MaterialComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="materialComponent" id="" value="false" {{ if eq .spell.MaterialComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Meta Breath</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="metaBreathComponent" id="" value="true" {{ if .spell.MetaBreathComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="metaBreathComponent" id="" value="false" {{ if eq .spell.MetaBreathComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="form-group">
-								<label class="control-label col-lg-3">Somatic</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="somaticComponent" id="" value="true" {{ if .spell.SomaticComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="somaticComponent" id="" value="false" {{ if eq .spell.SomaticComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">True Name</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="trueNameComponent" id="" value="true" {{ if .spell.TrueNameComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="trueNameComponent" id="" value="false" {{ if eq .spell.TrueNameComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">Verbal</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="verbalComponent" id="" value="true" {{ if .spell.VerbalComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="verbalComponent" id="" value="false" {{ if eq .spell.VerbalComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-lg-3">XP</label>
-								<div class="col-lg-9">
-									<label class="radio-inline">
-										<input type="radio" name="xPComponent" id="" value="true" {{ if .spell.XPComponent }}checked{{ end }}> Yes
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="xPComponent" id="" value="false" {{ if eq .spell.XPComponent false }}checked{{ end }}> No
-									</label>
-								</div>
-							</div>
-						</div>
-					</div>
-					<legend>Description</legend>
-					<div class="col-lg-12">
-						<div class="form-group">
-							<textarea name="descriptionHtml" class="form-control" style="resize: none;" rows="10">{{ if .spell }}{{ .spell.DescriptionHtml }}{{ end }}</textarea>
-						</div>
-					</div>
-						<label class="text-left control-label col-lg-3" style="text-align:left;">Allow others to view this spell</label>
-						<div class="col-lg-2">
-							<label class="radio-inline">
-								<input type="radio" name="public" id="" value="true" {{ if .spell }}{{ if .spell.Public }}checked{{ end }}{{ else }}checked{{ end }}> Yes
-							</label>
-							<label class="radio-inline">
-								<input type="radio" name="public" id="" value="false" {{ if eq .spell.Public false }}checked{{ end }}> No
-							</label>
-						</div>
-					<button class="btn btn-primary">Save</button>
-					{{ if .spell }}
-						<input type="hidden" name="id" value="{{ .spellId }}">
-					{{ end }}
-				</form>
+				</div>
 			</div>
         </div>
 		<br><br>

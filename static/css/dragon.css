@@ -9,19 +9,34 @@ html, body {
     background-color: #ccc;
 }
 
+/* text color */
+
+body, legend {
+    color: #fff;
+}
+
+.outline {
+	color: #fff;
+    text-shadow:
+    -1px -1px 0 maroon,
+    1px -1px 0 maroon,
+    -1px 1px 0 maroon,
+    1px 1px 0 maroon;
+}
+
 /* panels */
 
 .panel {
     background-color: transparent;
 }
-.panel-default > .panel-heading {
+
+.panel-default > .panel-heading, .list-group-item {
     color: #fff;
     background-color: #cc0000;
-    border-color: #cc0000;
 }
 
 .panel-default > .panel-body, .level-panel, .setup-panel, .description-panel {
-    color: #ffffff;
+    color: #fff;
     background-color: rgba(255,69,0,.65);
     border-color: #000000;
 }
@@ -32,11 +47,7 @@ html, body {
     border-color: #000000;
 }
 
-.picked-li {
-    color: black;
-}
-
-/* buttons */
+/* btn-default */
 
 .btn-default,
 .btn-default.disabled:hover,
@@ -85,11 +96,13 @@ fieldset[disabled] .btn-default:hover {
 .open > .dropdown-toggle.btn-default.focus,
 .btn-default:active,
 .btn-default.active,
-.open > .dropdown-toggle.btn-default, {
+.open > .dropdown-toggle.btn-default {
     color: #fff;
-    background-color: #ff0f00;
-    border-color: #ff0f00;
+    background-color: #c43601;
+    border-color: #c43601;
 }
+
+/* btn-primary */
 
 .btn-primary,
 .btn-primary.disabled:hover,
@@ -140,8 +153,63 @@ fieldset[disabled] .btn-primary:hover {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
     color: #fff;
-    background-color: #ffa800;
-    border-color: #ffa800;
+    background-color: #c69400;
+    border-color: #c69400;
+}
+
+/* btn-danger */
+
+.btn-danger,
+.btn-danger.disabled:hover,
+.btn-danger[disabled]:hover,
+fieldset[disabled] .btn-danger:hover,
+.btn-danger.disabled:focus,
+.btn-danger[disabled]:focus,
+fieldset[disabled] .btn-danger:focus,
+.btn-danger.disabled.focus,
+.btn-danger[disabled].focus,
+fieldset[disabled] .btn-danger.focus,
+.btn-danger.disabled,
+.btn-danger.disabled.active,
+.btn-danger.disabled.focus,
+.btn-danger.disabled:active,
+.btn-danger.disabled:focus,
+.btn-danger.disabled:hover,
+.btn-danger[disabled],
+.btn-danger[disabled].active,
+.btn-danger[disabled].focus,
+.btn-danger[disabled]:active,
+.btn-danger[disabled]:focus,
+.btn-danger[disabled]:hover,
+fieldset[disabled] .btn-danger,
+fieldset[disabled] .btn-danger.active,
+fieldset[disabled] .btn-danger.focus,
+fieldset[disabled] .btn-danger:active,
+fieldset[disabled] .btn-danger:focus,
+fieldset[disabled] .btn-danger:hover {
+    color: #fff;
+    background-color: #ff0000;
+    border-color: #ff0000;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger.focus,
+.btn-danger:active:hover,
+.btn-danger.active:hover,
+.open > .dropdown-toggle.btn-danger:hover,
+.btn-danger:active:focus,
+.btn-danger.active:focus,
+.open > .dropdown-toggle.btn-danger:focus,
+.btn-danger:active.focus,
+.btn-danger.active.focus,
+.open > .dropdown-toggle.btn-danger.focus,
+.btn-danger:active,
+.btn-danger.active,
+.open > .dropdown-toggle.btn-danger {
+    color: #fff;
+    background-color: #ab0000;
+    border-color: #ab0000;
 }
 
 /* letters */
@@ -235,4 +303,65 @@ span.label-primary {
 ::selection {
     color: red;
     background: yellow;
+}
+
+.form-control:focus, .btn:focus, .btn:focus:active {
+    border-color: #fffc00;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgba(255,252,0,.6);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(255,252,0,.6);
+}
+
+select.decorated option:hover {
+    box-shadow: 0 0 10px 100px #1882A8 inset;
+}
+
+/* inputs */
+
+.form-control {
+    color: #fff;
+    background-color: rgba(50,50,50,.75);
+}
+
+.form-control::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #ffbf00;
+}
+.form-control:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color: #ffbf00;
+   opacity: 1;
+}
+.form-control::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color: #ffbf00;
+   opacity: 1;
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: #ffbf00;
+}
+.form-control:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
+  color: #ffbf00;
+}
+
+/* alerts */
+
+.close {
+    opacity: 1;
+    text-shadow: none;
+}
+
+.alert-danger {
+    color: #ff0000;
+    background-color: #690000;
+    border: 3px solid #ff0000;
+}
+
+.alert-success {
+    color: #00ff00;
+    background-color: #005A00;
+    border: 3px solid #00ff00;
+}
+
+.alert-info {
+    color: #0000ff;
+    background-color: #00005A;
+    border: 3px solid #0000ff;
 }

@@ -143,6 +143,13 @@ var delSpellFromUser = web.Route{"POST", "/user/delSpell", func(w http.ResponseW
 	pickedLvl = append(pickedLvl[:idx], pickedLvl[idx+1:]...)
 	user.Picked[spellLvl] = pickedLvl
 	db.Set("user", userId, user)
+	if !user.PowerPoints {
+		var spellSetup SpellSetup
+		doc := db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
+		doc.As(&spellSetup)
+		spellSetup.PreparedSpells[spellLvl] = make([]float64, 0)
+		db.Set("spell-setup", doc.Id, spellSetup)
+	}
 	response["success"] = true
 	response["msg"] = "Successfully added spell"
 	response["picked"] = getPickedNames(user.Picked)
@@ -201,6 +208,13 @@ var changeLvl = web.Route{"POST", "/user/changeLvl", func(w http.ResponseWriter,
 	newPicked = append(newPicked, spellId)
 	user.Picked[newLvl] = newPicked
 	db.Set("user", userId, user)
+	if !user.PowerPoints {
+		var spellSetup SpellSetup
+		doc := db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
+		doc.As(&spellSetup)
+		spellSetup.PreparedSpells[spellLvl] = make([]float64, 0)
+		db.Set("spell-setup", doc.Id, spellSetup)
+	}
 	response["success"] = true
 	response["msg"] = "Successfully added spell"
 	response["picked"] = getPickedNames(user.Picked)

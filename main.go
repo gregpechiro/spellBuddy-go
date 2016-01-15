@@ -93,7 +93,7 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 
-var login = web.Route{"GET", "/login", func(w http.ResponseWriter, r *http.Request) {
+var login = web.Route{"GET", "/", func(w http.ResponseWriter, r *http.Request) {
 	tmpl.Render(w, r, "login.tmpl", web.Model{})
 }}
 
@@ -117,19 +117,19 @@ var loginPost = web.Route{"POST", "/login", func(w http.ResponseWriter, r *http.
 
 		user.LastSeen = time.Now().Unix()
 		db.Set("user", docs[0].Id, user)
-		web.SetSuccessRedirect(w, r, "/", "Welcome "+user.Username)
+		web.SetSuccessRedirect(w, r, "/home", "Welcome "+user.Username)
 		return
 	}
-	web.SetErrorRedirect(w, r, "/login", "Incorrect username or password")
+	web.SetErrorRedirect(w, r, "/", "Incorrect username or password")
 	return
 }}
 
 var logout = web.Route{"GET", "/logout", func(w http.ResponseWriter, r *http.Request) {
 	web.Logout(w, r)
-	web.SetSuccessRedirect(w, r, "/login", "See you next time")
+	web.SetSuccessRedirect(w, r, "/", "See you next time")
 }}
 
-var home = web.Route{"GET", "/", func(w http.ResponseWriter, r *http.Request) {
+var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request) {
 	userId := ParseId(web.GetSess(r, "id"))
 	var user User
 	uDoc := db.Get("user", userId)
@@ -160,13 +160,13 @@ var rest = web.Route{"POST", "/rest", func(w http.ResponseWriter, r *http.Reques
 	if spellSetup.UserId != userId || err != nil {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
-		web.SetErrorRedirect(w, r, "/", "Error Resting")
+		web.SetErrorRedirect(w, r, "/home", "Error Resting")
 		return
 	}
 	copy(spellSetup.RemainingSpells, spellSetup.SpellsPerDay)
 	copy(spellSetup.PreparedSpells, prepared)
 	db.Set("spell-setup", setupId, spellSetup)
-	http.Redirect(w, r, "/", 303)
+	http.Redirect(w, r, "/home", 303)
 	return
 }}
 
@@ -178,12 +178,12 @@ var ppRest = web.Route{"POST", "/pp-rest", func(w http.ResponseWriter, r *http.R
 	if ppSetup.UserId != userId {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
-		web.SetErrorRedirect(w, r, "/", "Error Resting")
+		web.SetErrorRedirect(w, r, "/home", "Error Resting")
 		return
 	}
 	ppSetup.RemainingPowerPoints = ppSetup.TotalPowerPoints
 	db.Set("pp-setup", setupId, ppSetup)
-	http.Redirect(w, r, "/", 303)
+	http.Redirect(w, r, "/home", 303)
 	return
 }}
 
@@ -196,12 +196,12 @@ var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Reques
 	if spellSetup.UserId != userId || err != nil || level < 0 || level > 9 {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
-		web.SetErrorRedirect(w, r, "/", "Error casting")
+		web.SetErrorRedirect(w, r, "/home", "Error casting")
 		return
 	}
 	spellSetup.RemainingSpells[level]--
 	db.Set("spell-setup", setupId, spellSetup)
-	http.Redirect(w, r, "/", 303)
+	http.Redirect(w, r, "/home", 303)
 	return
 
 }}
@@ -216,12 +216,12 @@ var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.R
 		log.Printf("ppCast() >> strconv.Atoi(): %v\n", err)
 		fmt.Println("userId: ", userId)
 		fmt.Println("setup userId: ", ppSetup.UserId)
-		web.SetErrorRedirect(w, r, "/", "Error casting")
+		web.SetErrorRedirect(w, r, "/home", "Error casting")
 		return
 	}
 	ppSetup.RemainingPowerPoints -= pp
 	db.Set("pp-setup", setupId, ppSetup)
-	http.Redirect(w, r, "/", 303)
+	http.Redirect(w, r, "/home", 303)
 	return
 
 }}
