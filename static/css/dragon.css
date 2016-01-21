@@ -30,7 +30,12 @@ body, legend {
     background-color: transparent;
 }
 
-.panel-default > .panel-heading, .list-group-item {
+.panel-default > .panel-heading,
+.list-group-item,
+.panel-default > .panel-heading a:hover,
+.panel-default > .panel-heading a:active,
+.panel-default > .panel-heading a:focus,
+.panel-default > .panel-heading a:focus:active   {
     color: #fff;
     background-color: #cc0000;
 }
@@ -305,7 +310,7 @@ span.label-primary {
     background: yellow;
 }
 
-.form-control:focus, .btn:focus, .btn:focus:active {
+.form-control:focus, .btn:focus, .btn:focus:active, a:focus {
     border-color: #fffc00;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgba(255,252,0,.6);
@@ -364,4 +369,29 @@ select.decorated option:hover {
     color: #0000ff;
     background-color: #00005A;
     border: 3px solid #0000ff;
+}
+
+/* navbar */
+
+.navbar-inverse {
+    background-color: #FF4500;
+    border: 4px solid #880000;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #880000;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #880000;
+}
+
+/* misc */
+
+a {
+    color: #ffbf00;
+}
+
+a:hover, a:active, a:focus:active, a:focus {
+    color: #c69400;
 }

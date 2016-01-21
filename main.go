@@ -18,7 +18,6 @@ var db = dbdb.NewDataStore()
 var tmpl *web.TmplCache
 
 func init() {
-
 	go dbdb.Serve(db, ":9999", "spell-buddy")
 	web.Funcs["title"] = strings.Title
 	web.Funcs["json"] = func(v interface{}) string {
@@ -80,15 +79,17 @@ func main() {
 	// admin routes
 	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells)
 
-	// spell routes
-	mux.AddSecureRoutes(USER, home, setup, addSpell, saveSpell, editSpell)
+	// custom spell routes
+	mux.AddSecureRoutes(USER, addSpell, saveSpell, editSpell)
 
 	// user account routes
 	mux.AddSecureRoutes(USER, account, saveAccount, saveTheme)
 
+	// spell setup routes
+	mux.AddSecureRoutes(USER, setup, addSpellToUser, delSpellFromUser, changeLvl, spellsPerDay)
+
 	// main app routes
-	mux.AddSecureRoutes(USER, addSpellToUser, delSpellFromUser, changeLvl, spellsPerDay, rest, cast)
-	mux.AddSecureRoutes(USER, pp, ppRest, ppCast)
+	mux.AddSecureRoutes(USER, home, rest, cast, pp, ppRest, ppCast)
 
 	http.ListenAndServe(":8080", mux)
 }

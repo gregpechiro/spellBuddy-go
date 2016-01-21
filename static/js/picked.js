@@ -19,7 +19,7 @@ function renderPicked() {
                 var spell = $('<li class="list-group-item clearfix picked-li">' +
                     picked[i][j] +
                     '<div class="input-group pull-right col-lg-6 input-group-sm">' +
-                        '<input id="change-' + i + '-' + j + '" type="text" class="form-control" placeholder="Level">' +
+                        '<input id="change-' + i + '-' + j + '" type="number" class="form-control" placeholder="Level">' +
                         '<span class="input-group-btn">' +
                             '<button id="change-' + i + '-' + j + '" class="btn btn-default change-lvl" data-lvl="' + i + '" data-idx="' + j + '">Change Level</button>' +
                             '<button id="delete-spell" class="btn btn-danger" data-lvl="' + i + '" data-idx="' + j + '">Delete</button>' +
@@ -52,12 +52,14 @@ function renderPicked() {
         });
     });
     $('button.change-lvl').click(function() {
-        newLvl =+ $('input#' + this.id).val();
-        if (newLvl < 0 || newLvl > 9) {
+        var newLvlStr = $('input#' + this.id).val();
+        var newLvl =+ $('input#' + this.id).val();
+        if (newLvl < 0 || newLvl > 9 || newLvlStr === '') {
             console.log("Incorrect level")
             return
         }
         var dat = 'userId=' + userId + '&spellLvl=' + $(this).attr('data-lvl') + '&idx=' + $(this).attr('data-idx') + '&newLvl=' + newLvl;
+
         $.ajax({
             type: 'POST',
             url: '/user/changeLvl',

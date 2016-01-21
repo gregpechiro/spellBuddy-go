@@ -74,7 +74,7 @@ function genResults(filteredSpells) {
                         '<form class="addSpell col-lg-6 pull-right">' +
                             ((doc.data.Custom && cat == 'userC') ? '<div class="col-lg-2 pull-right"><a href="/edit/spell/' + doc.id + '" class="btn btn-sm btn-primary">Edit</a></div>' : '') +
                             '<div class="input-group pull-right input-group-sm col-lg-10">'+
-                                '<input type="text" name="spellLvl" class="form-control" placeholder="Level">'+
+                                '<input type="number" name="spellLvl" class="form-control" placeholder="Level" required>'+
                                 '<span class="input-group-btn">'+
                                     '<button class="btn btn-default">Add Spell</button>'+
                                 '</span>'+
@@ -116,8 +116,9 @@ function genResults(filteredSpells) {
     $('#spells').html(group);
     $('form.addSpell').on("submit", function(e) {
         e.preventDefault();
-        lvl =+ $(this).find('input[name="spellLvl"]').val();
-        if (lvl < 0 || lvl > 9) {
+        var lvlStr = $(this).find('input[name="spellLvl"]').val();
+        var lvl =+ $(this).find('input[name="spellLvl"]').val();
+        if (lvl < 0 || lvl > 9 || lvlStr === '') {
             console.log("ERROR");
             return
         }

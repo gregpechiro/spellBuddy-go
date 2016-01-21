@@ -1,0 +1,1 @@
+$(document).ready(function(){$('button[id="toggle-pass"]').on("click",function(){var s=$('button[id="toggle-pass"] > i'),a=$('input[id="toggle-pass"]');s.hasClass("fa-eye-slash")?(s.removeClass("fa-eye-slash").addClass("fa-eye"),a.attr("type","text")):(s.removeClass("fa-eye").addClass("fa-eye-slash"),a.attr("type","password"))})});
