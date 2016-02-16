@@ -126,7 +126,7 @@ var loginPost = web.Route{"POST", "/login", func(w http.ResponseWriter, r *http.
 }}
 
 var logout = web.Route{"GET", "/logout", func(w http.ResponseWriter, r *http.Request) {
-	web.Logout(w, r)
+	web.Logout(w)
 	web.SetSuccessRedirect(w, r, "/", "See you next time")
 }}
 
