@@ -66,7 +66,18 @@ var addUser = web.Route{"POST", "/addUser", func(w http.ResponseWriter, r *http.
 			UserId:          userId,
 			SpellsPerDay:    []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			RemainingSpells: []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			PreparedSpells:  make([][]float64, 10),
+			PreparedSpells: [][]float64{
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+				make([]float64, 0),
+			},
 		}
 		db.Add("spell-setup", spellSetup)
 	}
@@ -115,7 +126,7 @@ var delUser = web.Route{"POST", "/delUser/:id", func(w http.ResponseWriter, r *h
 }}
 
 var modifiySpells = web.Route{"GET", "/mod/spell", func(w http.ResponseWriter, r *http.Request) {
-	docs := db.GetAll("spells")
+	docs := db.GetAll("spell")
 	for _, doc := range docs {
 		spell := Spell{
 			Area:            Ternary(doc.Data["area"] == nil, "", doc.Data["area"]).(string),
@@ -190,7 +201,18 @@ var modifiySpells = web.Route{"GET", "/mod/spell", func(w http.ResponseWriter, r
 			spell.XPComponent = false
 		}
 		spell.Components = strings.Join(c, " ")
-		db.Add("spell", spell)
+		db.Set("spell", doc.Id, spell)
 	}
 	fmt.Fprintf(w, "Finished Modifying spell. Hopefully it worked...")
+}}
+
+var updateSpells = web.Route{"GET", "/update/spells", func(w http.ResponseWriter, r *http.Request) {
+	docs := db.GetAll("spell")
+	for _, doc := range docs {
+		var spell Spell
+		doc.As(&spell)
+		db.Set("spell", doc.Id, spell)
+	}
+	web.SetSuccessRedirect(w, r, "/admin", "Successfully updated spells")
+	return
 }}

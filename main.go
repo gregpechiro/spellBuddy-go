@@ -19,6 +19,7 @@ var tmpl *web.TmplCache
 
 func init() {
 	go dbdb.Serve(db, ":9999", "spell-buddy")
+	web.SESSDUR = time.Minute * 60 * 3
 	web.Funcs["title"] = strings.Title
 	web.Funcs["json"] = func(v interface{}) string {
 		b, err := json.Marshal(v)
@@ -77,7 +78,7 @@ func main() {
 	mux.AddRoutes(login, loginPost, logout)
 
 	// admin routes
-	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells)
+	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells, updateSpells)
 
 	// custom spell routes
 	mux.AddSecureRoutes(USER, addSpell, saveSpell, editSpell)

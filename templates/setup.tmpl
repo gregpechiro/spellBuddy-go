@@ -139,6 +139,7 @@
 		<script src="/static/js/picked.js" charset="utf-8"></script>
 		<script src="/static/js/allSpells.js" charset="utf-8"></script>
 		<script src="/static/js/search.js" charset="utf-8"></script>
+		<script src="/static/js/util.js" charset="utf-8"></script>
 		<script type="text/javascript">
 
 			$(document).ready(function() {
@@ -151,7 +152,7 @@
 					$('span.letter').addClass('label-default');
 					l.removeClass('label-default');
 					l.addClass('label-primary');
-					test = l
+					test = l;
 					letter = l.attr('data-let');
 					setSpellSet();
 					genResults(paginate(spellSet));

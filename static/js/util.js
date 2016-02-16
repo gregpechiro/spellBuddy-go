@@ -23,3 +23,18 @@ function removeValue(array, target) {
 function sortNumber(a,b) {
     return a - b;
 }
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + '=' + cvalue + '; ' + expires +'; path=/';
+}
+
+function setFlash(type, message) {
+	var val = btoa(type + ':'+ message);
+	while (val[val.length - 1] == '=') {
+		val = val.slice(0, (val.length - 1));
+	}
+	setCookie('flash', val, 1);
+}

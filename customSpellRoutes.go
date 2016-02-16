@@ -72,6 +72,25 @@ var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *
 		c = append(c, "XP")
 	}
 	spell.Components = strings.Join(c, " ")
+
+	d := []string{}
+	if spell.AuditoryDisplay {
+		d = append(d, "Auditory")
+	}
+	if spell.MaterialDisplay {
+		d = append(d, "Material")
+	}
+	if spell.MentalDisplay {
+		d = append(d, "Mental")
+	}
+	if spell.OlfactoryDisplay {
+		d = append(d, "Olfactory")
+	}
+	if spell.VisualDisplay {
+		d = append(d, "Visual")
+	}
+	spell.Displays = strings.Join(d, " ")
+
 	if spellId != 0 {
 		if spell.UserId != userId {
 			web.SetErrorRedirect(w, r, "/setup/?cat=userc", "Cannot save spell")

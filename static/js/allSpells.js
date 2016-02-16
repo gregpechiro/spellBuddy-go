@@ -96,6 +96,7 @@ function genResults(filteredSpells) {
                         '<table>' +
                             '<tbody>' +
                                 ((doc.data.Components != '') ? '<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">' + doc.data.Components + '</td></tr>' : '') +
+                                ((doc.data.Displays != '') ? '<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">' + doc.data.Displays + '</td></tr>' : '') +
                                 ((doc.data.CastingTime != '') ? '<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">' + doc.data.CastingTime + '</td></tr>' : '') +
                                 ((doc.data.SpellRange != '') ? '<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">' + doc.data.SpellRange + '</td></tr>' : '') +
                                 ((doc.data.Area != '') ? '<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">' + doc.data.Area + '</td></tr>' : '') +
@@ -127,21 +128,31 @@ function genResults(filteredSpells) {
             url: '/user/addSpell',
             data: $(this).serialize(),
             success: function(data) {
-                data = JSON.parse(data);
-                if (data.success) {
-                    picked = data.picked;
-                    renderPicked();
+                try {
+                    data = JSON.parse(data);
+                    if (data.success) {
+                        picked = data.picked;
+                        renderPicked();
+                    }
+                } catch(err) {
+                    setFlash('alertError', 'Your session has expired. Please login');
+                    window.location.pathname = '/'
                 }
             },
         });
+
         $('form.addSpell').find('input[name="spellLvl"]').val('');
     });
 }
 
 function setSpellSet() {
     if (spells.length > 0) {
-        spellSet = spells.filter(filterLetter);
-        spellSet.sort(orderDoc);
+        if (filterLetter == '') {
+            spellSet == spells;
+        } else {
+            spellSet = spells.filter(filterLetter);
+            spellSet.sort(orderDoc);
+        }
     }
 }
 
@@ -178,6 +189,10 @@ function genLetters() {
     }
     for (var i = 0; i < lets.length; i++) {
         s = $('<span class="label ' + ((lets[i] == letter) ? 'label-primary' : 'label-default') + ' letter" data-let="' + lets[i] + '">' + lets[i].toUpperCase() + '</span>');
+        $('div#letters').append(s);
+    }
+    if (cat == 'userC') {
+        s = $('<span class="label label-default letter" data-let="">All</span>');
         $('div#letters').append(s);
     }
 }

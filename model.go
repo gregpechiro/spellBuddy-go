@@ -51,6 +51,12 @@ type Spell struct {
 	TrueNameComponent    bool
 	VerbalComponent      bool
 	XPComponent          bool
+	Displays             string
+	AuditoryDisplay      bool
+	MaterialDisplay      bool
+	MentalDisplay        bool
+	OlfactoryDisplay     bool
+	VisualDisplay        bool
 	Custom               bool
 	Public               bool
 	UserId               float64

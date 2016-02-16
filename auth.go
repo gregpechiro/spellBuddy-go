@@ -4,12 +4,12 @@ import "github.com/cagnosolutions/web"
 
 var ADMIN = web.Auth{
 	Roles:    []string{"ADMIN"},
-	Redirect: "/login",
+	Redirect: "/",
 	Msg:      "You are not authorized",
 }
 
 var USER = web.Auth{
 	Roles:    []string{"USER"},
-	Redirect: "/login",
+	Redirect: "/",
 	Msg:      "You must be logged in",
 }

@@ -6,7 +6,7 @@
 
 	</head>
 	<body>
-			{{ template "nav.tmpl" . }}
+		{{ template "nav.tmpl" . }}
         <div class="container">
 			{{ template "alerts.tmpl" . }}
             <div class="row">
@@ -128,7 +128,8 @@
 					                                            </p>
 					                                            <table>
 					                                                <tbody>
-					                                                    {{ if $spell.Data.CastingTime }}<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Components }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Data.Components }}<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Components }}</td></tr>{{ end }}
+																		{{ if $spell.Data.Displays }}<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Displays }}</td></tr>{{ end }}
 					                                                    {{ if $spell.Data.CastingTime }}<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.CastingTime }}</td></tr>{{ end }}
 					                                                    {{ if $spell.Data.SpelRange }}<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SpellRange }}</td></tr>{{ end }}
 					                                                    {{ if $spell.Data.Area }}<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Area }}</td></tr>{{ end }}
@@ -140,7 +141,7 @@
 					                                                </tbody>
 					                                            </table>
 					                                            <br>
-					                                            <span>{{ $spell.Data.DescriptionHtml }}</span>
+					                                            <span><pre>{{ $spell.Data.DescriptionHtml }}</pre></span>
 					                                        </div>
 					                                    </div>
 					                                </div>
@@ -161,10 +162,16 @@
 			var prepared = {{ if .setup.Data.PreparedSpells }}{{ json .setup.Data.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
 			var spd = {{ if .setup.Data.SpellsPerDay }}{{ json .setup.Data.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
 			$(document).ready(function() {
+				if (prepared == null) {
+					prepared = [[],[],[],[],[],[],[],[],[],[]];
+				}
 				$('input.prepare').click(function() {
 					level =+ $(this).attr('data-level');
 					spellId =+ $(this).attr('data-spell-id');
 					if (this.checked) {
+						if (prepared[level] == null) {
+							prepared[level] = [];
+						}
 						prepared[level].push(spellId);
 						console.log(prepared[level].length == spd[level]);
 						if (prepared[level].length == spd[level]) {
