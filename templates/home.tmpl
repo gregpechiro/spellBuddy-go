@@ -42,32 +42,34 @@
 													{{ $prepared := .setup.Data.PreparedSpells }}
 													{{ $spd := .setup.Data.SpellsPerDay}}
 													{{ range $level, $spells := .picked }}
-														{{ $prepLvl := index $prepared $level }}
-														{{ $spdLvl := index $spd $level }}
-	                                                	<div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
-	                                                    	<label>Level {{ $level }}</label>
-															{{ range $spell := $spells }}
-	                                                    		<div class="checkbox text-left" >
-	                                                        		<label>
-	                                                        			<input type="checkbox" class="prepare prepare-{{ $level }}" data-level="{{ $level }}" data-spell-id="{{ $spell.Id }}" {{ if isIn $prepLvl $spell.Id }}checked{{ else if lenEq $prepLvl $spdLvl}}disabled="disabled"{{ end }}>{{ $spell.Data.Name }}
-	                                                        		</label>
-	                                                    		</div>
-															{{ end }}
-	                                                	</div>
-														{{ if eq $level 4 }}
+															{{ $prepLvl := index $prepared $level }}
+															{{ $spdLvl := index $spd $level }}
+		                                                	<div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
+		                                                    	<label>Level {{ $level }}</label>
+																{{ range $spell := $spells }}
+		                                                    		<div class="checkbox text-left">
+		                                                        		<label>
+		                                                        			<input type="checkbox" class="prepare prepare-{{ $level }}" data-level="{{ $level }}" data-spell-id="{{ $spell.Id }}" {{ if isIn $prepLvl $spell.Id }}checked{{ else if lenEq $prepLvl $spdLvl }}disabled="disabled"{{ end }}>{{ $spell.Data.Name }}
+		                                                        		</label>
+		                                                    		</div>
+																{{ end }}
+		                                                	</div>
+															{{ if eq $level 4 }}
 												</div>
 												<div class="row">
-														{{ end }}
+															{{ end }}
 													{{ end }}
 												</div>
-                                                <div class="col-lg-offset-1 col-lg-10">
-													<form id="rest" action="/rest" method="post">
-														<input type="hidden" name="userId" value="{{ .user.Id }}">
-														<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-														<input type="hidden" name="prepared">
-                                                    	<button id="rest" class="btn btn-primary btn-block">Rest</button>
-													</form>
-                                                </div>
+												<div class="row">
+                                                	<div class="col-lg-offset-1 col-lg-10">
+														<form id="rest" action="/rest" method="post">
+															<input type="hidden" name="userId" value="{{ .user.Id }}">
+															<input type="hidden" name="setupId" value="{{ .setup.Id }}">
+															<input type="hidden" name="prepared">
+                                                    		<button id="rest" class="btn btn-primary btn-block">Rest</button>
+														</form>
+                                                	</div>
+												</div>
                                             </div>
                                         </div>
                                     </div>

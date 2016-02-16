@@ -20,6 +20,9 @@ var tmpl *web.TmplCache
 func init() {
 	go dbdb.Serve(db, ":9999", "spell-buddy")
 	web.SESSDUR = time.Minute * 60 * 3
+	web.Funcs["add"] = func(i, j int) int {
+		return i + j
+	}
 	web.Funcs["title"] = strings.Title
 	web.Funcs["json"] = func(v interface{}) string {
 		b, err := json.Marshal(v)

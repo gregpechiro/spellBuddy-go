@@ -3,12 +3,7 @@
 clear
 NODE="$1"
 DIR=`echo ${PWD##*/}`
-EXCLUDE=(".git" ".idea" "db" ".gitignore" "spellBuddy.tar" "deploy.sh")
-
-if [ "$NODE" == "" ]; then
-	echo "No node specified!"
-	exit 1
-fi
+EXCLUDE=(".git" ".idea" "db" ".gitignore" "spellBuddy.tar" "deploy.sh" "clean.sh" "*.go")
 
 if [ -f "${DIR}.tar" ]; then
 	echo "Removing old tar ${DIR}.tar..."
