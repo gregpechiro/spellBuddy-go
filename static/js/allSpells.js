@@ -48,8 +48,10 @@ function generatePaginator(lb, ub, pages) {
     paginator.append(prev);
     for (var i =  lb; i <= ub; i++) {
         var elem = $('<li data-page="' + i + '"><a href="#">' + (i+1) + '</a></li>');
+        elem.addClass('hidden-xs');
         if (page == i) {
             elem.addClass('active');
+            elem.removeClass('hidden-xs');
         }
         elem.click(function() {
             page =+ this.getAttribute('data-page');
@@ -71,9 +73,10 @@ function genResults(filteredSpells) {
                         '<a data-toggle="collapse" data-parent="#dndSpellAccordion" data-target="#dndSpell' + doc.id + '" style="cursor:pointer;">'+
                             doc.data.Name +
                         '</a>'+
+                        '<span class="visible-xs-block"><br></span>'+
                         '<form class="addSpell col-lg-6 pull-right">' +
                             ((doc.data.Custom && cat == 'userC') ? '<div class="col-lg-2 pull-right"><a href="/edit/spell/' + doc.id + '" class="btn btn-sm btn-primary">Edit</a></div>' : '') +
-                            '<div class="input-group pull-right input-group-sm col-lg-10">'+
+                            '<div class="input-group pull-right input-group-sm col-lg-10 col-xs-8">'+
                                 '<input type="number" name="spellLvl" class="form-control" placeholder="Level" required>'+
                                 '<span class="input-group-btn">'+
                                     '<button class="btn btn-default">Add Spell</button>'+
@@ -188,12 +191,16 @@ function genLetters() {
         letter = lets[0];
     }
     for (var i = 0; i < lets.length; i++) {
-        s = $('<span class="label ' + ((lets[i] == letter) ? 'label-primary' : 'label-default') + ' letter" data-let="' + lets[i] + '">' + lets[i].toUpperCase() + '</span>');
+        var s = $('<span class="label ' + ((lets[i] == letter) ? 'label-primary' : 'label-default') + ' letter" data-let="' + lets[i] + '">' + lets[i].toUpperCase() + '</span>');
+        var o = $('<option value="' + lets[i] + '">' + lets[i].toUpperCase() + '</option>')
         $('div#letters').append(s);
+        $('select#letters-dd').append(o);
     }
     if (cat == 'userC') {
-        s = $('<span class="label label-default letter" data-let="">All</span>');
+        var s = $('<span class="label label-default letter" data-let="">All</span>');
+        var o = $('<option value="">All</option>')
         $('div#letters').append(s);
+        $('select#letters-dd').append(o);
     }
 }
 

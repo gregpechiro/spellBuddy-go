@@ -20,7 +20,7 @@
                         <div class="panel-body">
                             <div class="row text-center">
 								{{ range $i, $v := .setup.Data.SpellsPerDay}}
-                                	<div class="col-lg-2 {{ if eq $i 0 5 }}col-lg-offset-1{{ end }}">
+                                	<div class="col-lg-2 {{ if eq $i 0 5 }}col-lg-offset-1{{ end }} col-xs-6">
                                     	<strong>Level {{ $i }}:</strong> {{ $v }}/Day
                                 	</div>
 								{{ end }}
@@ -44,7 +44,8 @@
 													{{ range $level, $spells := .picked }}
 															{{ $prepLvl := index $prepared $level }}
 															{{ $spdLvl := index $spd $level }}
-		                                                	<div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
+		                                                	<div class="col-lg-2 col-xs-12 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
+																<div class="col-xs-12">
 		                                                    	<label>Level {{ $level }}</label>
 																{{ range $spell := $spells }}
 		                                                    		<div class="checkbox text-left">
@@ -53,6 +54,7 @@
 		                                                        		</label>
 		                                                    		</div>
 																{{ end }}
+																</div>
 		                                                	</div>
 															{{ if eq $level 4 }}
 												</div>
@@ -61,13 +63,15 @@
 													{{ end }}
 												</div>
 												<div class="row">
-                                                	<div class="col-lg-offset-1 col-lg-10">
-														<form id="rest" action="/rest" method="post">
-															<input type="hidden" name="userId" value="{{ .user.Id }}">
-															<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-															<input type="hidden" name="prepared">
-                                                    		<button id="rest" class="btn btn-primary btn-block">Rest</button>
-														</form>
+                                                	<div class="col-lg-offset-1 col-lg-10 col-xs-12">
+														<div class="col-xs-12">
+															<form id="rest" action="/rest" method="post">
+																<input type="hidden" name="userId" value="{{ .user.Id }}">
+																<input type="hidden" name="setupId" value="{{ .setup.Id }}">
+																<input type="hidden" name="prepared">
+	                                                    		<button id="rest" class="btn btn-primary btn-block">Rest</button>
+															</form>
+														</div>
                                                 	</div>
 												</div>
                                             </div>

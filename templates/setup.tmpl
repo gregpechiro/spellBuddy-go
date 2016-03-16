@@ -39,7 +39,7 @@
 	                                <div class="panel-body setup-panel">
 	                                    <form name="spdForm" action="/user/spd" method="post">
 	                                        {{ range $level, $spd := .setup.Data.SpellsPerDay }}
-	                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
+	                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }} col-xs-6">
 	                                                <div class="form-group">
 	                                                    <label>Level {{ $level }}</label>
 	                                                    <input type="number" min=0 class="form-control"  name="level-{{ $level }}" placeholder="Level {{ $level }}" required="true" value="{{ $spd }}">
@@ -63,7 +63,12 @@
             <div class="row">
                 <div class="col-lg-7">
 					<div class="row">
-						<div id="letters" class="col-lg-12 text-center"></div>
+						<div id="letters" class="col-lg-12 text-center hidden-xs"></div>
+						<div id="letters-xs" class="col-lg-12 text-center visible-xs-block">
+							<select id="letters-dd" class="form-control">
+
+							</select>
+						</div>
 					</div>
 					<br>
                     <div class="row">
@@ -73,10 +78,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-9">
+                        <div class="col-lg-9 col-xs-6">
                             <ul id="paginator" class="pagination pagination-sm"></ul>
 						</div>
-						<div class="col-lg-3">
+						<div class="col-lg-3 col-xs-6">
 							<a href="/add/spell" class="btn btn-default btn-sm">Add Spell</a>
                             <div class="pull-right">
                                 <select id="pageSize" class="form-control input-sm decorated">
@@ -152,8 +157,12 @@
 					$('span.letter').addClass('label-default');
 					l.removeClass('label-default');
 					l.addClass('label-primary');
-					test = l;
 					letter = l.attr('data-let');
+					setSpellSet();
+					genResults(paginate(spellSet));
+				});
+				$('select#letters-dd').change(function() {
+					letter = this.value;
 					setSpellSet();
 					genResults(paginate(spellSet));
 				});
