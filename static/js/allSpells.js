@@ -112,7 +112,7 @@ function genResults(filteredSpells) {
                         '</table>' +
                         '<br>' +
                         '<span>' +
-                            ((doc.data.Custom) ? '<pre>' + doc.data.DescriptionHtml + '</pre>' : doc.data.DescriptionHtml) +
+                            '<div ' + ((doc.data.Custom) ? 'class="description"' : '') + '>' + doc.data.DescriptionHtml + '</div>' +
                         '</span>' +
                     '</div>' +
                 '</div>'+

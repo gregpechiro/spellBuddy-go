@@ -61,7 +61,7 @@ func ParseId(v interface{}) float64 {
 	case string:
 		id, err = strconv.ParseFloat(v.(string), 64)
 		if err != nil {
-			log.Printf("ParseId() >> strconv.ParseFloat(): ", err)
+			log.Printf("util.go >> ParseId() >> strconv.ParseFloat(): %v\n", err)
 		}
 	case uint64:
 		id = float64(v.(uint64))

@@ -19,13 +19,13 @@ var editSpell = web.Route{"GET", "/edit/spell/:id", func(w http.ResponseWriter, 
 	userId := ParseId(web.GetSess(r, "id"))
 	spellId := ParseId(r.FormValue(":id"))
 	if spellId < 1 {
-		web.SetErrorRedirect(w, r, "/setup?userc", "Invalid Spell")
+		web.SetErrorRedirect(w, r, "/setup?cat=userc", "Invalid Spell")
 		return
 	}
 	var spell Spell
 	db.Get("spell", spellId).As(&spell)
 	if spell.UserId != userId || !spell.Custom {
-		web.SetErrorRedirect(w, r, "/setup?userc", "Cannot edit spell")
+		web.SetErrorRedirect(w, r, "/setup?cat=userc", "Cannot edit spell")
 		return
 	}
 	tmpl.Render(w, r, "addSpell.tmpl", web.Model{
@@ -41,7 +41,10 @@ var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *
 	spellId := ParseId(r.FormValue("id"))
 	userId := ParseId(web.GetSess(r, "id"))
 	var spell Spell
-	db.Get("spell", spellId).As(&spell)
+	if spellId > 0 {
+		db.Get("spell", spellId).As(&spell)
+	}
+
 	FormToStruct(&spell, r.Form, "")
 	c := []string{}
 	if spell.ArcaneFocusComponent {

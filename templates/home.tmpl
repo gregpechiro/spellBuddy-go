@@ -8,7 +8,9 @@
 	<body>
 		{{ template "nav.tmpl" . }}
         <div class="container">
+
 			{{ template "alerts.tmpl" . }}
+			
             <div class="row">
                 <div class="col-lg-offset-1 col-lg-10">
                     <div class="panel panel-default">
@@ -148,11 +150,7 @@
 					                                            </table>
 					                                            <br>
 					                                            <span>
-																	{{ if $spell.Data.Custom }}
-																		<pre>{{ $spell.Data.DescriptionHtml }}</pre>
-																	{{ else }}
-																		{{ $spell.Data.DescriptionHtml }}
-																	{{end}}
+																	<div {{ if $spell.Data.Custom }}class="description"{{ end }}>{{ $spell.Data.DescriptionHtml }}</div>
 																</span>
 					                                        </div>
 					                                    </div>

@@ -21,6 +21,10 @@ span.label-primary {
     margin: 0;
 }
 
+.description {
+    white-space: pre-wrap;
+}
+
 pre {
     display: block;
     padding: 0px;
@@ -28,10 +32,9 @@ pre {
     font-size: inherit;
     line-height: inherit;
     color: inherit;
-    word-break: break-all;
-    word-wrap: break-word;
     background-color: inherit;
     border: 0px solid #ccc;
     border-radius: 0px;
     font-family: inherit;
+    white-space: pre-wrap;
 }
