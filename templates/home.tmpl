@@ -147,7 +147,13 @@
 					                                                </tbody>
 					                                            </table>
 					                                            <br>
-					                                            <span><pre>{{ $spell.Data.DescriptionHtml }}</pre></span>
+					                                            <span>
+																	{{ if $spell.Data.Custom }}
+																		<pre>{{ $spell.Data.DescriptionHtml }}</pre>
+																	{{ else }}
+																		{{ $spell.Data.DescriptionHtml }}
+																	{{end}}
+																</span>
 					                                        </div>
 					                                    </div>
 					                                </div>
