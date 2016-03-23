@@ -92,7 +92,7 @@ var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *
 	if spell.VisualDisplay {
 		d = append(d, "Visual")
 	}
-	spell.Displays = strings.Join(d, " ")
+	spell.Displays = strings.Join(d, ", ")
 
 	if spellId != 0 {
 		if spell.UserId != userId {

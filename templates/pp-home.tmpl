@@ -92,7 +92,9 @@
 					                                                </tbody>
 					                                            </table>
 					                                            <br>
-					                                            <span>{{ $spell.Data.DescriptionHtml }}</span>
+					                                            <span>
+																	<div {{ if $spell.Data.Custom }}class="description"{{ end }}>{{ $spell.Data.DescriptionHtml }}</div>
+																</span>
 					                                        </div>
 					                                    </div>
 					                                </div>
