@@ -19,6 +19,8 @@ var tmpl *web.TmplCache
 
 func init() {
 	go dbdb.Serve(db, ":9999", "spell-buddy")
+	//rand.Seed(time.Now().UnixNano())
+	//web.COOKIESALT = rand.Intn(100)
 	web.SESSDUR = time.Minute * 60 * 3
 	web.Funcs["add"] = func(i, j int) int {
 		return i + j
