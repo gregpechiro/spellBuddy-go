@@ -12,6 +12,6 @@ function search() {
 }
 
 function filterSearch(doc) {
-    var name = doc.data.Name.toLowerCase();
+    var name = doc.name.toLowerCase();
     return name.indexOf(searchText) >= 0;
 }

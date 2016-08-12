@@ -1,7 +1,6 @@
 var pageSize = 10;
 var page = 0;
 var pages;
-var test;
 
 function paginate(dataSet) {
     pages = Math.ceil(dataSet.length / pageSize);
@@ -66,53 +65,53 @@ function genResults(filteredSpells) {
     var i;
     group = $('<div class="panel-group" id="dndSpellAccordion" role="tablist"></div>');
     for (i = 0; i < filteredSpells.length; i++) {
-        var doc = filteredSpells[i]
+        var spell = filteredSpells[i]
         spell = $('<div class="panel panel-default">'+
-                '<div class="panel-heading clearfix" role="tab" id="heading' + doc.id + '">'+
+                '<div class="panel-heading clearfix" role="tab" id="heading' + spell.id + '">'+
                     '<h4 class="panel-title">'+
-                        '<a data-toggle="collapse" data-parent="#dndSpellAccordion" data-target="#dndSpell' + doc.id + '" style="cursor:pointer;">'+
-                            doc.data.Name +
+                        '<a data-toggle="collapse" data-parent="#dndSpellAccordion" data-target="#dndSpell' + spell.id + '" style="cursor:pointer;">'+
+                            spell.name +
                         '</a>'+
                         '<span class="visible-xs-block"><br></span>'+
                         '<form class="addSpell col-lg-6 pull-right">' +
-                            ((doc.data.Custom && cat == 'userC') ? '<div class="col-lg-2 pull-right"><a href="/edit/spell/' + doc.id + '" class="btn btn-sm btn-primary">Edit</a></div>' : '') +
+                            ((spell.custom && cat == 'userC') ? '<div class="col-lg-2 pull-right"><a href="/edit/spell/' + spell.id + '" class="btn btn-sm btn-primary">Edit</a></div>' : '') +
                             '<div class="input-group pull-right input-group-sm col-lg-10 col-xs-8">'+
                                 '<input type="number" name="spellLvl" class="form-control" placeholder="Level" required>'+
                                 '<span class="input-group-btn">'+
                                     '<button class="btn btn-default">Add Spell</button>'+
                                 '</span>'+
                             '</div>'+
-                            '<input type="hidden" name="spellId" value="' + doc.id + '">' +
+                            '<input type="hidden" name="spellId" value="' + spell.id + '">' +
                             '<input type="hidden" name="userId" value="' + userId + '"/>' +
                         '</form>' +
                     '</h4>'+
                 '</div>'+
-                '<div id="dndSpell' + doc.id + '" class="panel-collapse collapse">'+
+                '<div id="dndSpell' + spell.id + '" class="panel-collapse collapse">'+
                     '<div class="panel-body description-panel">' +
-                        '<h4>' + doc.data.School +
-                            ((doc.data.Subschool != '') ? '<span> (' + doc.data.Subschool + ')</span>' : '') +
-                            ((doc.data.Descriptors != '') ? '<span> [' + doc.data.Descriptors + ']</span>' : '') +
+                        '<h4>' + spell.school +
+                            ((spell.subschool != '') ? '<span> (' + spell.subschool + ')</span>' : '') +
+                            ((spell.descriptors != '') ? '<span> [' + spell.descriptors + ']</span>' : '') +
                         '</h4>' +
-                        ((doc.data.Rulebook != '') ? '<p>' +
-                            doc.data.Rulebook + ((doc.data.Page != 0 ) ? '<span> p. ' + doc.data.Page + '</span>' : '') +
+                        ((spell.rulebook != '') ? '<p>' +
+                            spell.rulebook + ((spell.page != 0 ) ? '<span> p. ' + spell.page + '</span>' : '') +
                         '</p>' : '') +
                         '<table>' +
                             '<tbody>' +
-                                ((doc.data.Components != '') ? '<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">' + doc.data.Components + '</td></tr>' : '') +
-                                ((doc.data.Displays != '') ? '<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">' + doc.data.Displays + '</td></tr>' : '') +
-                                ((doc.data.CastingTime != '') ? '<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">' + doc.data.CastingTime + '</td></tr>' : '') +
-                                ((doc.data.SpellRange != '') ? '<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">' + doc.data.SpellRange + '</td></tr>' : '') +
-                                ((doc.data.Area != '') ? '<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">' + doc.data.Area + '</td></tr>' : '') +
-                                ((doc.data.Effect != '') ? '<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">' + doc.data.Effect + '</td></tr>' : '') +
-                                ((doc.data.Target != '') ? '<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">' + doc.data.Target + '</td></tr>' : '') +
-                                ((doc.data.Duration != '') ? '<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">' + doc.data.Duration + '</td></tr>' : '') +
-                                ((doc.data.SavingThrow != '') ? '<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">' + doc.data.SavingThrow + '</td></tr>' : '') +
-                                ((doc.data.SpellResistance != '') ? '<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">' + doc.data.SpellResistance + '</td></tr>' : '') +
+                                ((spell.components != '') ? '<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">' + spell.components + '</td></tr>' : '') +
+                                ((spell.displays != '') ? '<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">' + spell.displays + '</td></tr>' : '') +
+                                ((spell.castingTime != '') ? '<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">' + spell.castingTime + '</td></tr>' : '') +
+                                ((spell.spellRange != '') ? '<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">' + spell.spellRange + '</td></tr>' : '') +
+                                ((spell.area != '') ? '<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">' + spell.area + '</td></tr>' : '') +
+                                ((spell.effect != '') ? '<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">' + spell.effect + '</td></tr>' : '') +
+                                ((spell.target != '') ? '<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">' + spell.target + '</td></tr>' : '') +
+                                ((spell.duration != '') ? '<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">' + spell.duration + '</td></tr>' : '') +
+                                ((spell.savingThrow != '') ? '<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">' + spell.savingThrow + '</td></tr>' : '') +
+                                ((spell.spellResistance != '') ? '<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">' + spell.spellResistance + '</td></tr>' : '') +
                             '</tbody>' +
                         '</table>' +
                         '<br>' +
                         '<span>' +
-                            '<div ' + ((doc.data.Custom) ? 'class="description"' : '') + '>' + doc.data.DescriptionHtml + '</div>' +
+                            '<div ' + ((spell.custom) ? 'class="description"' : '') + '>' + spell.descriptionHtml + '</div>' +
                         '</span>' +
                     '</div>' +
                 '</div>'+
@@ -124,25 +123,33 @@ function genResults(filteredSpells) {
         e.preventDefault();
         var lvlStr = $(this).find('input[name="spellLvl"]').val();
         var lvl =+ $(this).find('input[name="spellLvl"]').val();
-        if (lvl < 0 || lvl > 9 || lvlStr === '') {
-            console.log("ERROR");
+        if (lvl < 0) {
+            showError("Spell level cannot be negative");
+            $(this).find('input[name="spellLvl"]').val('');
+            return
+        }
+        if (lvl > 9) {
+            showError("Spell level must be between 0 and 9");
+            $(this).find('input[name="spellLvl"]').val('');
+            return
+        }
+        if (lvlStr === '') {
+            showError("Spell level cannot be empty");
+            $(this).find('input[name="spellLvl"]').val('');
             return
         }
         $.ajax({
             type: 'POST',
             url: '/user/addSpell',
             data: $(this).serialize(),
-            success: function(data) {
-                try {
-                    data = JSON.parse(data);
-                    if (data.success) {
-                        picked = data.picked;
-                        renderPicked();
-                    }
-                } catch(err) {
-                    setFlash('alertError', 'Your session has expired. Please login');
-                    window.location.pathname = '/'
+            success: function(resp) {
+                console.log(resp)
+                if (!resp.success) {
+                    showError(resp.msg);
+                    return;
                 }
+                picked = resp.picked;
+                renderPicked();
             },
         });
 
@@ -156,14 +163,14 @@ function setSpellSet() {
             spellSet == spells;
         } else {
             spellSet = spells.filter(filterLetter);
-            spellSet.sort(orderDoc);
+            spellSet.sort(orderSpell);
         }
     }
 }
 
-function orderDoc(doc1, doc2) {
-    var name1 = doc1.data.Name.toLowerCase();
-    var name2 = doc2.data.Name.toLowerCase();
+function orderSpell(spell1, spell2) {
+    var name1 = spell1.name.toLowerCase();
+    var name2 = spell2.name.toLowerCase();
     if (name1 < name2) {
         return -1;
     }
@@ -173,8 +180,8 @@ function orderDoc(doc1, doc2) {
     return 0;
 }
 
-function filterLetter(doc) {
-    var name = doc.data.Name.toLowerCase();
+function filterLetter(spell) {
+    var name = spell.name.toLowerCase();
     return name.startsWith(letter);
 }
 
@@ -182,7 +189,7 @@ function genLetters() {
     var m = {};
     var lets = [];
     for (var i = 0; i < spells.length; i++) {
-        var l = spells[i].data.Name[0].toLowerCase();
+        var l = spells[i].name[0].toLowerCase();
         m[l] = '';
     }
     for (letter in m) {

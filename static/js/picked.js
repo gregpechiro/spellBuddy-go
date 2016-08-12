@@ -38,44 +38,54 @@ function renderPicked() {
             type: 'POST',
             url: '/user/delSpell',
             data: dat,
-            success: function(data) {
-                data = JSON.parse(data);
-                if (data.success) {
-                    picked = data.picked;
-                    renderPicked();
-                } else {
-                    console.log(data.msg);
+            success: function(resp) {
+                if (!resp.success) {
+                    showError(resp.msg);
+                    return
                 }
+                picked = resp.picked;
+                renderPicked();
             },
             error: function() {
-                console.log('ERROR');
+                showError("Error deleting spell");
             }
         });
     });
     $('button.change-lvl').click(function() {
         var newLvlStr = $('input#' + this.id).val();
         var newLvl =+ $('input#' + this.id).val();
-        if (newLvl < 0 || newLvl > 9 || newLvlStr === '') {
-            console.log("Incorrect level")
+        if (newLvl < 0) {
+            showError("Spell level cannot be negative");
+            $('input#' + this.id).val('');
             return
         }
+        if (newLvl > 9) {
+            showError("Spell level must be between 0 and 9");
+            $('input#' + this.id).val('');
+            return
+        }
+        if (newLvlStr === '') {
+            showError("Spell level cannot be empty");
+            $('input#' + this.id).val('');
+            return
+        }
+
         var dat = 'userId=' + userId + '&spellLvl=' + $(this).attr('data-lvl') + '&idx=' + $(this).attr('data-idx') + '&newLvl=' + newLvl;
 
         $.ajax({
             type: 'POST',
             url: '/user/changeLvl',
             data: dat,
-            success: function(data) {
-                data = JSON.parse(data);
-                if (data.success) {
-                    picked = data.picked;
-                    renderPicked();
-                } else {
-                    console.log(data.msg);
+            success: function(resp) {
+                if (!resp.success) {
+                    showError(resp.msg);
+                    return
                 }
+                picked = resp.picked;
+                renderPicked();
             },
             error: function() {
-                console.log('ERROR');
+                showError("Error changing spell level");
             }
         });
 

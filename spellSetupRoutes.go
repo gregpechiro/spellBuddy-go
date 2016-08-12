@@ -1,43 +1,49 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/cagnosolutions/dbdb"
+	"github.com/cagnosolutions/adb"
 	"github.com/cagnosolutions/web"
 )
 
 var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
+	userId := web.GetSess(r, "id").(string)
 	var user User
-	db.Get("user", userId).As(&user)
+	//db2.Get("user", userId).As(&user)
+	db.Get("user", userId, &user)
 	var spellCat string
-	var spells dbdb.DocSorted
+	var spells []Spell
 	cat := r.FormValue("cat")
 
 	if cat == "allc" {
-		spells = db.Query("spell", dbdb.Eq{"Custom", true}, dbdb.Eq{"Public", true})
+		//spells = db2.Query("spell", dbdbMod.Eq{"Custom", true}, dbdbMod.Eq{"Public", true})
+		db.TestQuery("spell", &spells, adb.Eq("custom", "true"), adb.Eq("public", "true"))
 		spellCat = "allC"
 	} else if cat == "userc" {
-		spells = db.Query("spell", dbdb.Eq{"UserId", userId})
+		//spells = db2.Query("spell", dbdbMod.Eq{"UserId", userId})
+		db.TestQuery("spell", &spells, adb.Eq("userId", `"`+userId+`"`))
 		spellCat = "userC"
 	} else {
-		spells = db.Query("spell", dbdb.Eq{"Custom", false})
+		//spells = db2.Query("spell", dbdbMod.Eq{"Custom", false})
+		db.TestQuery("spell", &spells, adb.Eq("custom", "false"))
 		spellCat = "dndtool"
 	}
-	var setup *dbdb.Doc
+	var setup map[string]interface{}
 	if user.PowerPoints {
-		setup = db.Query("pp-setup", dbdb.Eq{"UserId", userId}).One()
+		//setup = db2.Query("pp-setup", dbdbMod.Eq{"UserId", userId}).One()
+		db.TestQueryOne("pp-setup", &setup, adb.Eq("userId", `"`+userId+`"`))
 	} else {
-		setup = db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
+		//setup = db2.Query("spell-setup", dbdbMod.Eq{"UserId", userId}).One()
+		db.TestQueryOne("spell-setup", &setup, adb.Eq("userId", `"`+userId+`"`))
+
 	}
 	tmpl.Render(w, r, "setup.tmpl", web.Model{
 		"picked":   getPickedNames(user.Picked),
-		"user":     db.Get("user", userId),
+		"user":     user,
 		"setup":    setup,
 		"spells":   spells,
 		"spellCat": spellCat,
@@ -45,10 +51,11 @@ var setup = web.Route{"GET", "/setup", func(w http.ResponseWriter, r *http.Reque
 }}
 
 var spellsPerDay = web.Route{"POST", "/user/spd", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(r.FormValue("userId"))
-	setupId := ParseId(r.FormValue("setupId"))
+	userId := r.FormValue("userId")
+	setupId := r.FormValue("setupId")
 	var spellSetup SpellSetup
-	db.Get("spell-setup", setupId).As(&spellSetup)
+	//db2.Get("spell-setup", setupId).As(&spellSetup)
+	db.Get("spell-setup", setupId, &spellSetup)
 	if userId != spellSetup.UserId {
 		web.SetErrorRedirect(w, r, "/setup", "Error updating spells per day")
 		return
@@ -57,22 +64,25 @@ var spellsPerDay = web.Route{"POST", "/user/spd", func(w http.ResponseWriter, r 
 		spd, _ := strconv.Atoi(r.FormValue(fmt.Sprintf("level-%d", i)))
 		spellSetup.SpellsPerDay[i] = spd
 	}
+	//db2.Set("spell-setup", setupId, spellSetup)
 	db.Set("spell-setup", setupId, spellSetup)
 	web.SetSuccessRedirect(w, r, "/setup", "Successfully updated spells per day")
 	return
 }}
 
 var pp = web.Route{"POST", "/user/pp", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(r.FormValue("userId"))
-	setupId := ParseId(r.FormValue("setupId"))
+	userId := r.FormValue("userId")
+	setupId := r.FormValue("setupId")
 	var ppSetup PowerPointsSetup
-	db.Get("pp-setup", setupId).As(&ppSetup)
+	//db2.Get("pp-setup", setupId).As(&ppSetup)
+	db.Get("pp-setup", setupId, &ppSetup)
 	if userId != ppSetup.UserId {
 		web.SetErrorRedirect(w, r, "/setup", "Error updating total power points")
 		return
 	}
 	totalPP, _ := strconv.Atoi(r.FormValue("totalPP"))
 	ppSetup.TotalPowerPoints = totalPP
+	//db2.Set("pp-setup", setupId, ppSetup)
 	db.Set("pp-setup", setupId, ppSetup)
 	web.SetSuccessRedirect(w, r, "/setup", "Successfully updated total power points")
 	return
@@ -80,44 +90,56 @@ var pp = web.Route{"POST", "/user/pp", func(w http.ResponseWriter, r *http.Reque
 
 var addSpellToUser = web.Route{"POST", "/user/addSpell", func(w http.ResponseWriter, r *http.Request) {
 	response := make(map[string]interface{})
-	userId := ParseId(r.FormValue("userId"))
-	spellId := ParseId(r.FormValue("spellId"))
+	userId := r.FormValue("userId")
+	spellId := r.FormValue("spellId")
 	spellLvl, err := strconv.ParseInt(r.FormValue("spellLvl"), 10, 64)
-	if err != nil || spellLvl > 9 || spellLvl < 0 {
+	if err != nil {
 		response["success"] = false
 		response["msg"] = "Error adding spell"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
+	if spellLvl > 9 {
+		response["success"] = false
+		response["msg"] = "Spell level must be between 0 and 9"
+		ajaxResponse(w, response)
+		return
+	}
+	if spellLvl < 0 {
+		response["success"] = false
+		response["msg"] = "Spell level cannot be negative"
+		ajaxResponse(w, response)
+		return
+	}
+
 	var user User
-	db.Get("user", userId).As(&user)
+	//db2.Get("user", userId).As(&user)
+	db.Get("user", userId, &user)
 	if user.Picked == nil {
-		user.Picked = make([][]float64, 0)
+		user.Picked = make([][]string, 10)
 	}
 	pickedLvl := user.Picked[spellLvl]
 	pickedLvl = append(pickedLvl, spellId)
 	user.Picked[spellLvl] = pickedLvl
+	//db2.Set("user", userId, user)
 	db.Set("user", userId, user)
 
 	response["success"] = true
 	response["msg"] = "Successfully added spell"
 	response["picked"] = getPickedNames(user.Picked)
-	b, _ := json.Marshal(response)
-	fmt.Fprintf(w, "%s", b)
+	ajaxResponse(w, response)
 	return
 }}
 
 var delSpellFromUser = web.Route{"POST", "/user/delSpell", func(w http.ResponseWriter, r *http.Request) {
 	response := make(map[string]interface{})
-	userId := ParseId(r.FormValue("userId"))
+	userId := r.FormValue("userId")
 	spellLvl, err := strconv.Atoi(r.FormValue("spellLvl"))
 	if err != nil {
 		log.Printf("delSpellFfromUser >> spellLvl >> Atoi(): %v\n", err)
 		response["success"] = false
 		response["msg"] = "Error deleting spell"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	idx, err := strconv.Atoi(r.FormValue("idx"))
@@ -125,49 +147,49 @@ var delSpellFromUser = web.Route{"POST", "/user/delSpell", func(w http.ResponseW
 		log.Printf("delSpellFfromUser >> idx >> Atoi(): %v\n", err)
 		response["success"] = false
 		response["msg"] = "Error deleting spell"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	var user User
-	db.Get("user", userId).As(&user)
+	//db2.Get("user", userId).As(&user)
+	db.Get("user", userId, &user)
 	if user.Picked == nil || len(user.Picked) < spellLvl || len(user.Picked[spellLvl]) < idx {
 		log.Printf("delSpellFfromUser >> user.Picked size\n")
 		response["success"] = false
 		response["msg"] = "Error deleting spell"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	pickedLvl := user.Picked[spellLvl]
 	pickedLvl = append(pickedLvl[:idx], pickedLvl[idx+1:]...)
 	user.Picked[spellLvl] = pickedLvl
+	//db2.Set("user", userId, user)
 	db.Set("user", userId, user)
 	if !user.PowerPoints {
 		var spellSetup SpellSetup
-		doc := db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
-		doc.As(&spellSetup)
-		spellSetup.PreparedSpells[spellLvl] = make([]float64, 0)
-		db.Set("spell-setup", doc.Id, spellSetup)
+		//doc := db2.Query("spell-setup", dbdbMod.Eq{"UserId", userId}).One()
+		//doc.As(&spellSetup)
+		db.TestQueryOne("spell-setup", &spellSetup, adb.Eq("userId", `"`+userId+`"`))
+		spellSetup.PreparedSpells[spellLvl] = make([]string, 0)
+		//db2.Set("spell-setup", doc.Id, spellSetup)
+		db.Set("spell-setup", spellSetup.Id, spellSetup)
 	}
 	response["success"] = true
-	response["msg"] = "Successfully added spell"
+	response["msg"] = "Successfully deleted spell"
 	response["picked"] = getPickedNames(user.Picked)
-	b, _ := json.Marshal(response)
-	fmt.Fprintf(w, "%s", b)
+	ajaxResponse(w, response)
 	return
 }}
 
 var changeLvl = web.Route{"POST", "/user/changeLvl", func(w http.ResponseWriter, r *http.Request) {
 	response := make(map[string]interface{})
-	userId := ParseId(r.FormValue("userId"))
+	userId := r.FormValue("userId")
 	spellLvl, err := strconv.Atoi(r.FormValue("spellLvl"))
 	if err != nil {
 		log.Printf("delSpellFfromUser >> spellLvl >> Atoi(): %v\n", err)
 		response["success"] = false
 		response["msg"] = "Error changing spell level"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	idx, err := strconv.Atoi(r.FormValue("idx"))
@@ -175,8 +197,7 @@ var changeLvl = web.Route{"POST", "/user/changeLvl", func(w http.ResponseWriter,
 		log.Printf("delSpellFfromUser >> idx >> Atoi(): %v\n", err)
 		response["success"] = false
 		response["msg"] = "Error changing spell level"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	newLvl, err := strconv.Atoi(r.FormValue("newLvl"))
@@ -184,18 +205,17 @@ var changeLvl = web.Route{"POST", "/user/changeLvl", func(w http.ResponseWriter,
 		log.Printf("delSpellFfromUser >> idx >> Atoi(): %v\n", err)
 		response["success"] = false
 		response["msg"] = "Error changing spell level"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	var user User
-	db.Get("user", userId).As(&user)
+	//db2.Get("user", userId).As(&user)
+	db.Get("user", userId, &user)
 	if user.Picked == nil || len(user.Picked) < spellLvl || len(user.Picked) < newLvl || len(user.Picked[spellLvl]) < idx {
 		log.Printf("delSpellFfromUser >> user.Picked size\n")
 		response["success"] = false
 		response["msg"] = "Error changing spell level"
-		b, _ := json.Marshal(response)
-		fmt.Fprintf(w, "%s", b)
+		ajaxResponse(w, response)
 		return
 	}
 	spellId := user.Picked[spellLvl][idx]
@@ -207,18 +227,21 @@ var changeLvl = web.Route{"POST", "/user/changeLvl", func(w http.ResponseWriter,
 	newPicked := user.Picked[newLvl]
 	newPicked = append(newPicked, spellId)
 	user.Picked[newLvl] = newPicked
+	//db2.Set("user", userId, user)
 	db.Set("user", userId, user)
 	if !user.PowerPoints {
 		var spellSetup SpellSetup
-		doc := db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One()
-		doc.As(&spellSetup)
-		spellSetup.PreparedSpells[spellLvl] = make([]float64, 0)
-		db.Set("spell-setup", doc.Id, spellSetup)
+		//doc := db2.Query("spell-setup", dbdbMod.Eq{"UserId", userId}).One()
+		//doc.As(&spellSetup)
+		db.TestQueryOne("spell-setup", &spellSetup, adb.Eq("userId", `"`+userId+`"`))
+
+		spellSetup.PreparedSpells[spellLvl] = make([]string, 0)
+		//db2.Set("spell-setup", doc.Id, spellSetup)
+		db.Set("spell-setup", spellSetup.Id, spellSetup)
 	}
 	response["success"] = true
 	response["msg"] = "Successfully added spell"
 	response["picked"] = getPickedNames(user.Picked)
-	b, _ := json.Marshal(response)
-	fmt.Fprintf(w, "%s", b)
+	ajaxResponse(w, response)
 	return
 }}

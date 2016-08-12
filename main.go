@@ -9,16 +9,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cagnosolutions/dbdb"
+	"github.com/cagnosolutions/adb"
 	"github.com/cagnosolutions/web"
+	"github.com/gregpechiro/dbdbMod"
 )
 
 var mux = web.NewMux()
-var db = dbdb.NewDataStore()
+var db2 = dbdbMod.NewDataStore()
+var db = adb.NewDB()
 var tmpl *web.TmplCache
 
 func init() {
-	go dbdb.Serve(db, ":9999", "spell-buddy")
+	go dbdbMod.Serve(db2, ":9999", "spell-buddy")
 	//web.NewCookieSalt()
 	web.SESSDUR = time.Minute * 60 * 3
 	web.Funcs["add"] = func(i, j int) int {
@@ -32,9 +34,9 @@ func init() {
 		}
 		return string(b)
 	}
-	web.Funcs["isIn"] = func(src []interface{}, target interface{}) bool {
-		for _, i := range src {
-			if target == i {
+	web.Funcs["isIn"] = func(src []string, target string) bool {
+		for _, s := range src {
+			if target == s {
 				return true
 			}
 		}
@@ -73,6 +75,11 @@ func init() {
 }
 
 func main() {
+	db2.AddStore("spell")
+	db2.AddStore("user")
+	db2.AddStore("spell-setup")
+	db2.AddStore("pp-setup")
+
 	db.AddStore("spell")
 	db.AddStore("user")
 	db.AddStore("spell-setup")
@@ -82,7 +89,7 @@ func main() {
 	mux.AddRoutes(login, loginPost, logout)
 
 	// admin routes
-	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser, modifiySpells, updateSpells)
+	mux.AddSecureRoutes(ADMIN, adminHome, adminUser, addUser, saveUser, delUser)
 
 	// custom spell routes
 	mux.AddSecureRoutes(USER, addSpell, saveSpell, editSpell)
@@ -104,30 +111,46 @@ var login = web.Route{"GET", "/", func(w http.ResponseWriter, r *http.Request) {
 }}
 
 var loginPost = web.Route{"POST", "/login", func(w http.ResponseWriter, r *http.Request) {
-	if r.FormValue("username") == "admin" && r.FormValue("password") == "admin" {
+	username, password := r.FormValue("username"), r.FormValue("password")
+	if username == "admin" && password == "admin" {
 		web.Login(w, r, "ADMIN")
 		web.SetSuccessRedirect(w, r, "/admin", "Welcome in memory admin")
 		return
 	}
-	docs := db.Query("user", dbdb.Eq{"Username", r.FormValue("username")}, dbdb.Eq{"Password", r.FormValue("password")}, dbdb.Eq{"Active", true})
 
-	if len(docs) == 1 {
-		var user User
-		docs[0].As(&user)
-		sess := web.Login(w, r, user.Role)
-		sess["id"] = docs[0].Id
-
-		sess["username"] = user.Username
-
-		web.PutMultiSess(w, r, sess)
-
-		user.LastSeen = time.Now().Unix()
-		db.Set("user", docs[0].Id, user)
-		web.SetSuccessRedirect(w, r, "/home", "Welcome "+user.Username)
+	var user User
+	if !db.Auth("user", username, password, &user) {
+		web.SetErrorRedirect(w, r, "/", "Incorrect username or password")
 		return
 	}
-	web.SetErrorRedirect(w, r, "/", "Incorrect username or password")
+	sess := web.Login(w, r, user.Role)
+	sess["id"] = user.Id
+	sess["username"] = user.Username
+	web.PutMultiSess(w, r, sess)
+	user.LastSeen = time.Now().Unix()
+	db.Set("user", user.Id, user)
+	web.SetSuccessRedirect(w, r, "/home", "Welcome "+user.Username)
 	return
+
+	// docs := db2.Query("user", dbdbMod.Eq{"Username", r.FormValue("username")}, dbdbMod.Eq{"Password", r.FormValue("password")}, dbdbMod.Eq{"Active", true})
+	//
+	// if len(docs) == 1 {
+	// 	var user User
+	// 	docs[0].As(&user)
+	// 	sess := web.Login(w, r, user.Role)
+	// 	sess["id"] = docs[0].Id
+	//
+	// 	sess["username"] = user.Username
+	//
+	// 	web.PutMultiSess(w, r, sess)
+	//
+	// 	user.LastSeen = time.Now().Unix()
+	// 	db2.Set("user", docs[0].Id, user)
+	// 	web.SetSuccessRedirect(w, r, "/home", "Welcome "+user.Username)
+	// 	return
+	// }
+	// web.SetErrorRedirect(w, r, "/", "Incorrect username or password")
+	// return
 }}
 
 var logout = web.Route{"GET", "/logout", func(w http.ResponseWriter, r *http.Request) {
@@ -136,69 +159,98 @@ var logout = web.Route{"GET", "/logout", func(w http.ResponseWriter, r *http.Req
 }}
 
 var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
+
+	// userId := ParseId(web.GetSess(r, "id"))
+	// var user User
+	// uDoc := db2.Get("user", userId)
+	// uDoc.As(&user)
+	// if user.PowerPoints {
+	// 	tmpl.Render(w, r, "pp-home.tmpl", web.Model{
+	// 		"user":   uDoc,
+	// 		"setup":  db2.Query("pp-setup", dbdbMod.Eq{"UserId", userId}).One(),
+	// 		"picked": getPicked(user.Picked),
+	// 	})
+	// 	return
+	// }
+	// tmpl.Render(w, r, "home.tmpl", web.Model{
+	// 	"user":   uDoc,
+	// 	"setup":  db2.Query("spell-setup", dbdbMod.Eq{"UserId", userId}).One(),
+	// 	"picked": getPicked(user.Picked),
+	// })
+	// return
+
 	var user User
-	uDoc := db.Get("user", userId)
-	uDoc.As(&user)
+	db.Get("user", web.GetSess(r, "id").(string), &user)
 	if user.PowerPoints {
+		var powerPointsSetup PowerPointsSetup
+		db.TestQueryOne("pp-setup", &powerPointsSetup, adb.Eq("userId", `"`+user.Id+`"`))
 		tmpl.Render(w, r, "pp-home.tmpl", web.Model{
-			"user":   uDoc,
-			"setup":  db.Query("pp-setup", dbdb.Eq{"UserId", userId}).One(),
+			"user":   user,
+			"setup":  powerPointsSetup,
 			"picked": getPicked(user.Picked),
 		})
 		return
 	}
+	var spellSetup SpellSetup
+	db.TestQueryOne("spell-setup", &spellSetup, adb.Eq("userId", `"`+user.Id+`"`))
 	tmpl.Render(w, r, "home.tmpl", web.Model{
-		"user":   uDoc,
-		"setup":  db.Query("spell-setup", dbdb.Eq{"UserId", userId}).One(),
+		"user":   user,
+		"setup":  spellSetup,
 		"picked": getPicked(user.Picked),
 	})
 	return
+
 }}
 
 var rest = web.Route{"POST", "/rest", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
-	setupId := ParseId(r.FormValue("setupId"))
-	var prepared [][]float64
+	userId := web.GetSess(r, "id")
+	setupId := r.FormValue("setupId")
+	var prepared [][]string
 	err := json.Unmarshal([]byte(r.FormValue("prepared")), &prepared)
 	var spellSetup SpellSetup
-	db.Get("spell-setup", setupId).As(&spellSetup)
+	//db2.Get("spell-setup", setupId).As(&spellSetup)
+	db.Get("spell-setup", setupId, &spellSetup)
 	if spellSetup.UserId != userId || err != nil {
 		fmt.Println("userId: ", userId)
-		fmt.Println("spellId: ", setupId)
+		fmt.Println("setupId: ", setupId)
+		fmt.Println(err)
 		web.SetErrorRedirect(w, r, "/home", "Error Resting")
 		return
 	}
 	copy(spellSetup.RemainingSpells, spellSetup.SpellsPerDay)
 	copy(spellSetup.PreparedSpells, prepared)
+	//db2.Set("spell-setup", setupId, spellSetup)
 	db.Set("spell-setup", setupId, spellSetup)
 	http.Redirect(w, r, "/home", 303)
 	return
 }}
 
 var ppRest = web.Route{"POST", "/pp-rest", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
-	setupId := ParseId(r.FormValue("setupId"))
-	var ppSetup PowerPointsSetup
-	db.Get("pp-setup", setupId).As(&ppSetup)
-	if ppSetup.UserId != userId {
+	userId := web.GetSess(r, "id")
+	setupId := r.FormValue("setupId")
+	var powerPointSetup PowerPointsSetup
+	//db2.Get("pp-setup", setupId).As(&ppSetup)
+	db.Get("pp-setup", setupId, &powerPointSetup)
+	if powerPointSetup.UserId != userId {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
 		web.SetErrorRedirect(w, r, "/home", "Error Resting")
 		return
 	}
-	ppSetup.RemainingPowerPoints = ppSetup.TotalPowerPoints
-	db.Set("pp-setup", setupId, ppSetup)
+	powerPointSetup.RemainingPowerPoints = powerPointSetup.TotalPowerPoints
+	//db2.Set("pp-setup", setupId, ppSetup)
+	db.Set("pp-setup", setupId, powerPointSetup)
 	http.Redirect(w, r, "/home", 303)
 	return
 }}
 
 var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
-	setupId := ParseId(r.FormValue("setupId"))
+	userId := web.GetSess(r, "id")
+	setupId := r.FormValue("setupId")
 	level, err := strconv.Atoi(r.FormValue("level"))
 	var spellSetup SpellSetup
-	db.Get("spell-setup", setupId).As(&spellSetup)
+	//db2.Get("spell-setup", setupId).As(&spellSetup)
+	db.Get("spell-setup", setupId, &spellSetup)
 	if spellSetup.UserId != userId || err != nil || level < 0 || level > 9 {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
@@ -206,6 +258,7 @@ var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	spellSetup.RemainingSpells[level]--
+	//db2.Set("spell-setup", setupId, spellSetup)
 	db.Set("spell-setup", setupId, spellSetup)
 	http.Redirect(w, r, "/home", 303)
 	return
@@ -213,20 +266,35 @@ var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Reques
 }}
 
 var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
-	setupId := ParseId(r.FormValue("setupId"))
+	userId := web.GetSess(r, "id")
+	setupId := r.FormValue("setupId")
 	pp, err := strconv.Atoi(r.FormValue("pp"))
-	var ppSetup PowerPointsSetup
-	db.Get("pp-setup", setupId).As(&ppSetup)
-	if ppSetup.UserId != userId || err != nil || pp < 0 || pp > ppSetup.TotalPowerPoints {
+	var powerPointsSetup PowerPointsSetup
+	//db2.Get("pp-setup", setupId).As(&ppSetup)
+	db.Get("pp-setup", setupId, &powerPointsSetup)
+	//fmt.Println())
+	if err != nil {
 		log.Printf("ppCast() >> strconv.Atoi(): %v\n", err)
-		fmt.Println("userId: ", userId)
-		fmt.Println("setup userId: ", ppSetup.UserId)
 		web.SetErrorRedirect(w, r, "/home", "Error casting")
 		return
 	}
-	ppSetup.RemainingPowerPoints -= pp
-	db.Set("pp-setup", setupId, ppSetup)
+	if powerPointsSetup.UserId != userId {
+		fmt.Println("userId: ", userId)
+		fmt.Println("setup userId: ", powerPointsSetup.UserId)
+		web.SetErrorRedirect(w, r, "/home", "Error casting")
+	}
+	if pp > powerPointsSetup.RemainingPowerPoints {
+		web.SetErrorRedirect(w, r, "/home", "You do not have enough power points left to cast that!")
+		return
+	}
+	if pp < 0 {
+		web.SetErrorRedirect(w, r, "/home", "You cannot cast negative power points")
+		return
+	}
+	db.Get("pp-setup", setupId, &powerPointsSetup)
+	powerPointsSetup.RemainingPowerPoints -= pp
+	//db2.Set("pp-setup", setupId, ppSetup)
+	db.Set("pp-setup", setupId, powerPointsSetup)
 	http.Redirect(w, r, "/home", 303)
 	return
 

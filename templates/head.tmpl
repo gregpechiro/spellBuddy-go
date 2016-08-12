@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/static/css/main.css">
 {{ if .user}}
-    {{ if eq .user.Data.Theme "DragonFire" }}
+    {{ if eq .user.Theme "DragonFire" }}
         <link rel="stylesheet" href="/static/css/dragon.css">
-    {{ else if eq .user.Data.Theme "IceMage" }}
+    {{ else if eq .user.Theme "IceMage" }}
 
     {{ end }}
 {{ end }}

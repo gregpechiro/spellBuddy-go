@@ -10,7 +10,7 @@
         <div class="container">
 
 			{{ template "alerts.tmpl" . }}
-			
+
             <div class="row">
                 <div class="col-lg-offset-1 col-lg-10">
                     <div class="panel panel-default">
@@ -21,7 +21,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row text-center">
-								{{ range $i, $v := .setup.Data.SpellsPerDay}}
+								{{ range $i, $v := .setup.SpellsPerDay}}
                                 	<div class="col-lg-2 {{ if eq $i 0 5 }}col-lg-offset-1{{ end }} col-xs-6">
                                     	<strong>Level {{ $i }}:</strong> {{ $v }}/Day
                                 	</div>
@@ -41,8 +41,8 @@
                                         <div class="panel-body">
                                             <div class="row text-center">
 												<div class="row">
-													{{ $prepared := .setup.Data.PreparedSpells }}
-													{{ $spd := .setup.Data.SpellsPerDay}}
+													{{ $prepared := .setup.PreparedSpells }}
+													{{ $spd := .setup.SpellsPerDay}}
 													{{ range $level, $spells := .picked }}
 															{{ $prepLvl := index $prepared $level }}
 															{{ $spdLvl := index $spd $level }}
@@ -52,7 +52,7 @@
 																{{ range $spell := $spells }}
 		                                                    		<div class="checkbox text-left">
 		                                                        		<label>
-		                                                        			<input type="checkbox" class="prepare prepare-{{ $level }}" data-level="{{ $level }}" data-spell-id="{{ $spell.Id }}" {{ if isIn $prepLvl $spell.Id }}checked{{ else if lenEq $prepLvl $spdLvl }}disabled="disabled"{{ end }}>{{ $spell.Data.Name }}
+		                                                        			<input type="checkbox" class="prepare prepare-{{ $level }}" data-level="{{ $level }}" data-spell-id="{{ $spell.Id }}" {{ if isIn $prepLvl $spell.Id }}checked{{ else if len $prepLvl | eq $spdLvl }}disabled="disabled"{{ end }}>{{ $spell.Name }}
 		                                                        		</label>
 		                                                    		</div>
 																{{ end }}
@@ -89,7 +89,7 @@
                 <div class="col-lg-offset-1 col-lg-10">
                     <div class="panel-group" id="spellsAccordion" role="tablist" aria-multiselectable="true">
 						{{ $setup := .setup }}
-						{{ $remaining := .setup.Data.RemainingSpells }}
+						{{ $remaining := .setup.RemainingSpells }}
 						{{ range $level, $spells := .picked }}
 							{{ $len := len $spells }}
 							{{ if gt $len 0 }}
@@ -101,22 +101,22 @@
 		                                    <a data-toggle="collapse" data-parent="#spellsAccordion" data-target="#level-{{ $level }}-colapse" style="cursor:pointer;">
 		                                        Level {{ $level }} Spells
 		                                    </a>
-		                                    <span class="pull-right">{{ index $setup.Data.RemainingSpells $level }} Spells left today</span>
+		                                    <span class="pull-right">{{ index $setup.RemainingSpells $level }} Spells left today</span>
 		                                </h4>
 		                            </div>
 		                            <div id="level-{{ $level }}-colapse" class="panel-collapse collapse">
 										<div class="panel-body level-panel">
 				                            <div class="panel-group" id="level-{{ $level }}-accordian" role="tablist">
 												{{ range $spell := $spells}}
-					                                <div class="panel panel-default" ng-repeat="s in levelsSpells">
+					                                <div class="panel panel-default">
 					                                    <div class="panel-heading" role="tab" id="heading-{{ $level }}-inner">
 					                                        <h4 class="panel-title clearfix">
 					                                            <a data-toggle="collapse" class="col-lg-6" data-parent="#level-{{ $level }}-accordian" data-target="#spell-{{ $level }}-{{ $spell.Id }}-colapse" style="cursor:pointer;">
-					                                                {{ $spell.Data.Name }}
+					                                                {{ $spell.Name }}
 					                                            </a>
 																<div class="col-lg-1 col-lg-offset-5 pull-right">
 																	{{ $in := isIn $prepLvl $spell.Id }}
-																	{{ $hasRemaining := gt $remainingLvl 0.0 }}
+																	{{ $hasRemaining := gt $remainingLvl 0 }}
 																	<form action="/cast" method="post">
 																		<input type="hidden" name="level" value="{{ $level }}">
 																		<input type="hidden" name="setupId" value="{{ $setup.Id }}">
@@ -127,30 +127,30 @@
 					                                    </div>
 					                                    <div id="spell-{{ $level }}-{{ $spell.Id }}-colapse" class="panel-collapse collapse">
 					                                        <div class="panel-body spell-panel">
-					                                            <h4>{{ $spell.Data.School }}
-																	{{ if $spell.Data.Subschool }}<span> ({{ $spell.Data.Subschool }})</span>{{ end }}
-																	{{ if $spell.Data.Descriptors }}<span> [{{ $spell.Data.Descriptors }}]</span>{{ end }}
+					                                            <h4>{{ $spell.School }}
+																	{{ if $spell.Subschool }}<span> ({{ $spell.Subschool }})</span>{{ end }}
+																	{{ if $spell.Descriptors }}<span> [{{ $spell.Descriptors }}]</span>{{ end }}
 																</h4>
 					                                            <p ng-show="s.rulebook">
-					                                                {{ $spell.Data.Rulebook }}{{ if $spell.Data.Page  }}<span> p. {{ $spell.Data.Page }}</span>{{ end }}
+					                                                {{ $spell.Rulebook }}{{ if $spell.Page  }}<span> p. {{ $spell.Page }}</span>{{ end }}
 					                                            </p>
 					                                            <table>
 					                                                <tbody>
-					                                                    {{ if $spell.Data.Components }}<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Components }}</td></tr>{{ end }}
-																		{{ if $spell.Data.Displays }}<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Displays }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.CastingTime }}<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.CastingTime }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.SpelRange }}<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SpellRange }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.Area }}<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Area }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.Effect }}<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Effect }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.Target }}<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Target }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.Duration }}<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.Duration }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.SavingThrow }}<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SavingThrow }}</td></tr>{{ end }}
-					                                                    {{ if $spell.Data.SpellResistance }}<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">{{ $spell.Data.SpellResistance }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Components }}<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">{{ $spell.Components }}</td></tr>{{ end }}
+																		{{ if $spell.Displays }}<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">{{ $spell.Displays }}</td></tr>{{ end }}
+					                                                    {{ if $spell.CastingTime }}<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">{{ $spell.CastingTime }}</td></tr>{{ end }}
+					                                                    {{ if $spell.SpellRange }}<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">{{ $spell.SpellRange }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Area }}<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">{{ $spell.Area }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Effect }}<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">{{ $spell.Effect }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Target }}<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">{{ $spell.Target }}</td></tr>{{ end }}
+					                                                    {{ if $spell.Duration }}<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">{{ $spell.Duration }}</td></tr>{{ end }}
+					                                                    {{ if $spell.SavingThrow }}<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">{{ $spell.SavingThrow }}</td></tr>{{ end }}
+					                                                    {{ if $spell.SpellResistance }}<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">{{ $spell.SpellResistance }}</td></tr>{{ end }}
 					                                                </tbody>
 					                                            </table>
 					                                            <br>
 					                                            <span>
-																	<div {{ if $spell.Data.Custom }}class="description"{{ end }}>{{ $spell.Data.DescriptionHtml }}</div>
+																	<div {{ if $spell.Custom }}class="description"{{ end }}>{{ $spell.DescriptionHtml }}</div>
 																</span>
 					                                        </div>
 					                                    </div>
@@ -169,15 +169,15 @@
 		{{ template "scripts.tmpl" }}
 		<script src="/static/js/util.js" charset="utf-8"></script>
 		<script type="text/javascript">
-			var prepared = {{ if .setup.Data.PreparedSpells }}{{ json .setup.Data.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
-			var spd = {{ if .setup.Data.SpellsPerDay }}{{ json .setup.Data.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
+			var prepared = {{ if .setup.PreparedSpells }}{{ json .setup.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
+			var spd = {{ if .setup.SpellsPerDay }}{{ json .setup.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
 			$(document).ready(function() {
 				if (prepared == null) {
 					prepared = [[],[],[],[],[],[],[],[],[],[]];
 				}
 				$('input.prepare').click(function() {
 					level =+ $(this).attr('data-level');
-					spellId =+ $(this).attr('data-spell-id');
+					spellId = $(this).attr('data-spell-id');
 					if (this.checked) {
 						if (prepared[level] == null) {
 							prepared[level] = [];

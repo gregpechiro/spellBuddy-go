@@ -9,40 +9,62 @@ import (
 )
 
 var addSpell = web.Route{"GET", "/add/spell", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
+	userId := web.GetSess(r, "id").(string)
+	var user User
+	db.Get("user", userId, &user)
 	tmpl.Render(w, r, "addSpell.tmpl", web.Model{
-		"user": db.Get("user", userId),
+		"user": user,
 	})
 }}
 
 var editSpell = web.Route{"GET", "/edit/spell/:id", func(w http.ResponseWriter, r *http.Request) {
-	userId := ParseId(web.GetSess(r, "id"))
-	spellId := ParseId(r.FormValue(":id"))
-	if spellId < 1 {
+	userId := web.GetSess(r, "id").(string)
+	spellId := r.FormValue(":id")
+	// if spellId < 1 {
+	// 	web.SetErrorRedirect(w, r, "/setup?cat=userc", "Invalid Spell")
+	// 	return
+	// }
+	var spell Spell
+	//db2.Get("spell", spellId).As(&spell)
+
+	if !db.Get("spell", spellId, &spell) {
 		web.SetErrorRedirect(w, r, "/setup?cat=userc", "Invalid Spell")
 		return
 	}
-	var spell Spell
-	db.Get("spell", spellId).As(&spell)
+
 	if spell.UserId != userId || !spell.Custom {
 		web.SetErrorRedirect(w, r, "/setup?cat=userc", "Cannot edit spell")
 		return
 	}
+	var user User
+	db.Get("user", userId, &user)
 	tmpl.Render(w, r, "addSpell.tmpl", web.Model{
 		"spell":   spell,
 		"spellId": spellId,
-		"user":    db.Get("user", userId),
+		//"user":    db2.Get("user", userId),
+		"user": user,
 	})
 	return
 }}
 
 var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	spellId := ParseId(r.FormValue("id"))
-	userId := ParseId(web.GetSess(r, "id"))
+	userId := web.GetSess(r, "id").(string)
+	spellId := r.FormValue("id")
 	var spell Spell
-	if spellId > 0 {
-		db.Get("spell", spellId).As(&spell)
+	db.Get("spell", spellId, &spell)
+	//if spellId != "" {
+	//	db2.Get("spell", spellId).As(&spell)
+	//}
+
+	if spell.Id == "" {
+		spell.Id = genId()
+		spell.UserId = userId
+		spell.Custom = true
+	} else if spell.UserId != userId {
+		web.SetErrorRedirect(w, r, "/setup/?cat=userc", "Cannot save spell")
+		fmt.Printf("Spell: %v\n", spell)
+		fmt.Printf("UserId: %v\n", userId)
+		return
 	}
 
 	FormToStruct(&spell, r.Form, "")
@@ -94,19 +116,21 @@ var saveSpell = web.Route{"POST", "/save/spell", func(w http.ResponseWriter, r *
 	}
 	spell.Displays = strings.Join(d, ", ")
 
-	if spellId != 0 {
-		if spell.UserId != userId {
-			web.SetErrorRedirect(w, r, "/setup/?cat=userc", "Cannot save spell")
-			fmt.Printf("Spell: %v\n", spell)
-			fmt.Printf("UserId: %v\n", userId)
-			return
-		}
-		db.Set("spell", spellId, spell)
-	} else {
-		spell.UserId = userId
-		spell.Custom = true
-		db.Add("spell", spell)
-	}
+	// if spellId != 0 {
+	// 	if spell.UserId != userId {
+	// 		web.SetErrorRedirect(w, r, "/setup/?cat=userc", "Cannot save spell")
+	// 		fmt.Printf("Spell: %v\n", spell)
+	// 		fmt.Printf("UserId: %v\n", userId)
+	// 		return
+	// 	}
+	// 	db2.Set("spell", spellId, spell)
+	// } else {
+	// 	spell.UserId = userId
+	// 	spell.Custom = true
+	// 	db2.Add("spell", spell)
+	// }
+	db.Set("spell", spell.Id, spell)
+
 	web.SetSuccessRedirect(w, r, "/setup?cat=userc", "Successfully saved spell")
 	return
 }}

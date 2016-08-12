@@ -1,12 +1,32 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
+
+func ajaxResponse(w http.ResponseWriter, m map[string]interface{}) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	b, err := json.Marshal(m)
+	if err != nil {
+		fmt.Fprintf(w, `{"success":false,"msg":"There was an error. Please try again"}`)
+		return
+	}
+	fmt.Fprintf(w, "%s", b)
+	return
+}
+
+func genId() string {
+	return strconv.Itoa(int(time.Now().UnixNano()))
+}
 
 func Ternary(comp bool, v, w interface{}) interface{} {
 	if comp {
@@ -15,15 +35,17 @@ func Ternary(comp bool, v, w interface{}) interface{} {
 	return w
 }
 
-func getPicked(userP [][]float64) [][]interface{} {
-	var picked [][]interface{}
+func getPicked(userP [][]string) [][]Spell {
+	var picked [][]Spell
 	if userP != nil {
-		pickedLvl := []interface{}{}
+		pickedLvl := []Spell{}
 		for _, lvl := range userP {
-			pickedLvl = []interface{}{}
+			pickedLvl = []Spell{}
 			if len(lvl) > 0 {
 				for _, spellId := range lvl {
-					pickedLvl = append(pickedLvl, db.Get("spell", spellId))
+					var spell Spell
+					db.Get("spell", spellId, &spell)
+					pickedLvl = append(pickedLvl, spell)
 				}
 			}
 			picked = append(picked, pickedLvl)
@@ -32,7 +54,24 @@ func getPicked(userP [][]float64) [][]interface{} {
 	return picked
 }
 
-func getPickedNames(userP [][]float64) [][]string {
+func getPicked2(userP [][]float64) [][]interface{} {
+	var picked [][]interface{}
+	if userP != nil {
+		pickedLvl := []interface{}{}
+		for _, lvl := range userP {
+			pickedLvl = []interface{}{}
+			if len(lvl) > 0 {
+				for _, spellId := range lvl {
+					pickedLvl = append(pickedLvl, db2.Get("spell", spellId))
+				}
+			}
+			picked = append(picked, pickedLvl)
+		}
+	}
+	return picked
+}
+
+func getPickedNames(userP [][]string) [][]string {
 	var picked [][]string
 	if userP != nil {
 		pickedLvl := []string{}
@@ -40,7 +79,26 @@ func getPickedNames(userP [][]float64) [][]string {
 			pickedLvl = []string{}
 			if len(lvl) > 0 {
 				for _, spellId := range lvl {
-					pickedLvl = append(pickedLvl, db.Get("spell", spellId).Data["Name"].(string))
+					var spell Spell
+					db.Get("spell", spellId, &spell)
+					pickedLvl = append(pickedLvl, spell.Name)
+				}
+			}
+			picked = append(picked, pickedLvl)
+		}
+	}
+	return picked
+}
+
+func getPickedNames2(userP [][]float64) [][]string {
+	var picked [][]string
+	if userP != nil {
+		pickedLvl := []string{}
+		for _, lvl := range userP {
+			pickedLvl = []string{}
+			if len(lvl) > 0 {
+				for _, spellId := range lvl {
+					pickedLvl = append(pickedLvl, db2.Get("spell", spellId).Data["Name"].(string))
 				}
 			}
 			picked = append(picked, pickedLvl)

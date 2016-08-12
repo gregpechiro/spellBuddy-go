@@ -1,7 +1,6 @@
 .idea/
 spellBuddy
-db/pp-setup/
-db/spell-setup/
-db/user/
+db/
+db2/
 spellBuddy.tar
 .tern-project

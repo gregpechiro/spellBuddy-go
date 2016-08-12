@@ -9,54 +9,61 @@
 
         <div class="container-fluid">
             {{ template "alerts.tmpl" . }}
+
+			<div id="ajaxErrorAlert" class="alert alert-danger alert-dismissable text-center hide">
+		        <button id="ajaxErrorClose" type="button" class="close" >&times;</button>
+		        <div id="ajaxErrorMsg">
+		        	There was an error
+		        </div>
+		    </div>
+
+
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="panel-group" id="spdAccordion" role="tablist" aria-multiselectable="true">
-						{{ if .user.Data.PowerPoints}}
-							<div class="panel panel-default">
-								<div class="panel-heading clearfix">
-									<form class="form-horizontal" action="/user/pp" method="post">
-										<label for="pp" class="col-lg-2 control-label">Total Power Points</label>
-										<div class="col-lg-2">
-											<input type="number" name="totalPP" class="form-control" placeholder="Power Points" value="{{ .setup.Data.TotalPowerPoints }}">
-										</div>
-										<input type="hidden" name="userId" value="{{ .user.Id }}">
-										<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-										<button class="btn btn-default">Save</button>
-									</form>
-								</div>
+					{{ if .user.PowerPoints}}
+						<div class="panel panel-default">
+							<div class="panel-heading clearfix">
+								<form class="form-horizontal" action="/user/pp" method="post">
+									<label for="pp" class="col-lg-2 control-label">Total Power Points</label>
+									<div class="col-lg-2">
+										<input type="number" name="totalPP" class="form-control" placeholder="Power Points" value="{{ .setup.totalPowerPoints }}">
+									</div>
+									<input type="hidden" name="userId" value="{{ .user.Id }}">
+									<input type="hidden" name="setupId" value="{{ .setup.id }}">
+									<button class="btn btn-default">Save</button>
+								</form>
 							</div>
-						{{ else }}
-	                        <div class="panel panel-default" ng-if="!user.powerPoints">
-	                            <div class="panel-heading">
-	                                <h4 class="panel-title">
-	                                    <a data-toggle="collapse" data-parent="#spdAccordion" href="#" data-target="#spdCollapse">
-	                                        Spells Per Day Click to Edit
-	                                    </a>
-	                                </h4>
-	                            </div>
-	                            <div id="spdCollapse" class="panel-collapse collapse">
-	                                <div class="panel-body setup-panel">
-	                                    <form name="spdForm" action="/user/spd" method="post">
-	                                        {{ range $level, $spd := .setup.Data.SpellsPerDay }}
-	                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }} col-xs-6">
-	                                                <div class="form-group">
-	                                                    <label>Level {{ $level }}</label>
-	                                                    <input type="number" min=0 class="form-control"  name="level-{{ $level }}" placeholder="Level {{ $level }}" required="true" value="{{ $spd }}">
-	                                                </div>
-	                                            </div>
-	                                        {{ end }}
-											<input type="hidden" name="userId" value="{{ .user.Id }}">
-											<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-	                                    	<div class="col-lg-offset-1 col-lg-10">
-	                                        	<button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#spdCollapse">Save</button>
-	                                    	</div>
-										</form>
-	                                </div>
-	                            </div>
-	                        </div>
-						{{ end }}
-                    </div>
+						</div>
+					{{ else }}
+                        <div class="panel panel-default" ng-if="!user.powerPoints">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#spdAccordion" href="#" data-target="#spdCollapse">
+                                        Spells Per Day Click to Edit
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="spdCollapse" class="panel-collapse collapse">
+                                <div class="panel-body setup-panel">
+                                    <form name="spdForm" action="/user/spd" method="post">
+                                        {{ range $level, $spd := .setup.spellsPerDay }}
+                                            <div class="col-lg-2 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }} col-xs-6">
+                                                <div class="form-group">
+                                                    <label>Level {{ $level }}</label>
+                                                    <input type="number" min=0 class="form-control"  name="level-{{ $level }}" placeholder="Level {{ $level }}" required="true" value="{{ $spd }}">
+                                                </div>
+                                            </div>
+                                        {{ end }}
+										<input type="hidden" name="userId" value="{{ .user.Id }}">
+										<input type="hidden" name="setupId" value="{{ .setup.id }}">
+                                    	<div class="col-lg-offset-1 col-lg-10">
+                                        	<button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#spdCollapse">Save</button>
+                                    	</div>
+									</form>
+                                </div>
+                            </div>
+                        </div>
+					{{ end }}
                 </div>
             </div>
 
@@ -133,13 +140,19 @@
 
         {{ template "scripts.tmpl" }}
 		<script type="text/javascript">
-			var userId = {{ .user.Id }}
+			var userId = '{{ .user.Id }}';
 			var letter = 'a';
-			var spells = {{ if .spells }}{{.spells | json }}{{ else }}[]{{ end }};
+			var spells = {{ if .spells }}{{ json .spells }}{{ else }}[]{{ end }};
 			var spellSet = [];
-			var picked = {{ if .picked }}{{ .picked |json }}{{ else }}[]{{ end }};
+			var picked = {{ if .picked }}{{ json .picked }}{{ else }}[]{{ end }};
 			var cat = '{{.spellCat}}';
 			var searchText = '';
+
+			function showError(msg) {
+			    $('#ajaxErrorMsg').text(msg);
+			    $('#ajaxErrorAlert').removeClass('hide');
+			}
+
 		</script>
 		<script src="/static/js/picked.js" charset="utf-8"></script>
 		<script src="/static/js/allSpells.js" charset="utf-8"></script>
@@ -171,6 +184,10 @@
 				$('input#search').on('keyup change', function () {
 					searchText = $('input#search').val().toLowerCase();
 					search();
+				});
+
+				$('#ajaxErrorClose').click(function() {
+					$('#ajaxErrorAlert').addClass('hide');
 				});
 
 			});

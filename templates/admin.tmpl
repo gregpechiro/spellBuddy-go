@@ -36,24 +36,24 @@
                         <div class="panel-body">
 							<form action="{{ if .user }}/saveUser/{{ .user.Id }}{{ else }}/addUser{{ end }}" method="post">
 								<div class="form-group">
-	                                <input name="name" type="text" class="form-control" placeholder="Name" value="{{ if .user }}{{ .user.Data.Name }}{{ end }}">
+	                                <input name="name" type="text" class="form-control" placeholder="Name" value="{{ if .user }}{{ .user.Name }}{{ end }}">
 	                            </div>
 	                            <div class="form-group">
-	                                <input name="username" type="text" class="form-control" placeholder="Username" value="{{ if .user }}{{ .user.Data.Username }}{{ end }}">
+	                                <input name="username" type="text" class="form-control" placeholder="Username" value="{{ if .user }}{{ .user.Username }}{{ end }}">
 	                            </div>
 	                            <div class="form-group">
-	                                <input name="password" type="text" class="form-control" placeholder="Password" value="{{ if .user }}{{ .user.Data.Password }}{{ end }}">
+	                                <input name="password" type="text" class="form-control" placeholder="Password" value="{{ if .user }}{{ .user.Password }}{{ end }}">
 	                            </div>
 	                            <label>Power Points</label>
 	                            <div class="form-group row">
 	                                <div class="col-xs-2">
 	                                    <div class="radio">
-	                                        <label><input name="powerPoints" type="radio" value="true" {{ if .user.Data.PowerPoints}}checked{{ end }}>Yes</label>
+	                                        <label><input name="powerPoints" type="radio" value="true" {{ if .user.PowerPoints}}checked{{ end }}>Yes</label>
 	                                    </div>
 	                                </div>
 	                                <div class="col-xs-2">
 	                                    <div class="radio">
-	                                        <label><input name="powerPoints" type="radio" value="false" {{ if .user }}{{ if eq .user.Data.PowerPoints false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
+	                                        <label><input name="powerPoints" type="radio" value="false" {{ if .user }}{{ if eq .user.PowerPoints false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
 	                                    </div>
 	                                </div>
 	                            </div>
@@ -61,12 +61,12 @@
 	                            <div class="form-group row">
 	                                <div class="col-xs-2">
 	                                    <div class="radio">
-	                                        <label><input name="active" type="radio" value="true" {{ if .user.Data.Active}}checked{{ end }}>Yes</label>
+	                                        <label><input name="active" type="radio" value="true" {{ if .user.Active}}checked{{ end }}>Yes</label>
 	                                    </div>
 	                                </div>
 	                                <div class="col-xs-2">
 	                                    <div class="radio">
-	                                        <label><input name="active" type="radio" value="false" {{ if .user }}{{ if eq .user.Data.Active false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
+	                                        <label><input name="active" type="radio" value="false" {{ if .user }}{{ if eq .user.Active false }}checked{{ end }}{{ else }}checked{{ end }}>No</label>
 	                                    </div>
 	                                </div>
 	                            </div>
@@ -105,11 +105,11 @@
 									{{ range $user := .users }}
                                     	<tr>
                                         	<td>{{ $user.Id }}</td>
-                                        	<td>{{ $user.Data.Name }}</td>
-                                        	<td>{{ $user.Data.Username }}</td>
-                                        	<td>{{ $user.Data.Password }}</td>
-                                        	<td>{{ $user.Data.Active }}</td>
-                                        	<td>{{ $user.Data.Role }}</td>
+                                        	<td>{{ $user.Name }}</td>
+                                        	<td>{{ $user.Username }}</td>
+                                        	<td>{{ $user.Password }}</td>
+                                        	<td>{{ $user.Active }}</td>
+                                        	<td>{{ $user.Role }}</td>
                                         	<td><a href="/admin/{{ $user.Id }}">Edit</a></td>
                                         	<td><a href="#" data-delete="/delUser/{{ $user.Id }}" data-message="Are you sure you would like to permanently delete this user?" class="text-danger delete-button">Delete</a></td>
                                     	</tr>
