@@ -54,22 +54,22 @@ func getPicked(userP [][]string) [][]Spell {
 	return picked
 }
 
-func getPicked2(userP [][]float64) [][]interface{} {
-	var picked [][]interface{}
-	if userP != nil {
-		pickedLvl := []interface{}{}
-		for _, lvl := range userP {
-			pickedLvl = []interface{}{}
-			if len(lvl) > 0 {
-				for _, spellId := range lvl {
-					pickedLvl = append(pickedLvl, db2.Get("spell", spellId))
-				}
-			}
-			picked = append(picked, pickedLvl)
-		}
-	}
-	return picked
-}
+// func getPicked2(userP [][]float64) [][]interface{} {
+// 	var picked [][]interface{}
+// 	if userP != nil {
+// 		pickedLvl := []interface{}{}
+// 		for _, lvl := range userP {
+// 			pickedLvl = []interface{}{}
+// 			if len(lvl) > 0 {
+// 				for _, spellId := range lvl {
+// 					pickedLvl = append(pickedLvl, db2.Get("spell", spellId))
+// 				}
+// 			}
+// 			picked = append(picked, pickedLvl)
+// 		}
+// 	}
+// 	return picked
+// }
 
 func getPickedNames(userP [][]string) [][]string {
 	var picked [][]string
@@ -90,22 +90,22 @@ func getPickedNames(userP [][]string) [][]string {
 	return picked
 }
 
-func getPickedNames2(userP [][]float64) [][]string {
-	var picked [][]string
-	if userP != nil {
-		pickedLvl := []string{}
-		for _, lvl := range userP {
-			pickedLvl = []string{}
-			if len(lvl) > 0 {
-				for _, spellId := range lvl {
-					pickedLvl = append(pickedLvl, db2.Get("spell", spellId).Data["Name"].(string))
-				}
-			}
-			picked = append(picked, pickedLvl)
-		}
-	}
-	return picked
-}
+// func getPickedNames2(userP [][]float64) [][]string {
+// 	var picked [][]string
+// 	if userP != nil {
+// 		pickedLvl := []string{}
+// 		for _, lvl := range userP {
+// 			pickedLvl = []string{}
+// 			if len(lvl) > 0 {
+// 				for _, spellId := range lvl {
+// 					pickedLvl = append(pickedLvl, db2.Get("spell", spellId).Data["Name"].(string))
+// 				}
+// 			}
+// 			picked = append(picked, pickedLvl)
+// 		}
+// 	}
+// 	return picked
+// }
 
 func GetBool(s string) bool {
 	b, _ := strconv.ParseBool(s)
