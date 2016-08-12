@@ -3,12 +3,18 @@
 	<head>
 		<title>Login</title>
         {{ template "head.tmpl" }}
+		<link rel="stylesheet" href="/static/css/login.css" charset="utf-8">
 	</head>
 	<body>
         <br>
         <div class="container">
             {{ template "alerts.tmpl" . }}
         	<div class="row text-center">
+				<div class="hidden-xs hidden-sm">
+					<div style="margin-top:100px;">
+
+					</div>
+				</div>
         		<div class="col-lg-offset-4 col-lg-4">
         			<div class="panel panel-default">
         				<div class="panel-heading">Login</div>
