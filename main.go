@@ -86,8 +86,8 @@ func main() {
 	db.AddStore("spell-setup")
 	db.AddStore("pp-setup")
 
-	move()
-	testSpells()
+	//i := move()
+	//testSpells(i)
 
 	// auth routed
 	mux.AddRoutes(login, loginPost, logout)

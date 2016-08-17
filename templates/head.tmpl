@@ -19,5 +19,9 @@
         <link rel="stylesheet" href="/static/css/ice.css">
     {{ else if eq .user.Theme "DarkMage" }}
         <link rel="stylesheet" href="/static/css/mage.css">
+    {{ else }}
+        <link rel="stylesheet" href="/static/css/default.css" charset="utf-8">
     {{ end }}
+{{ else }}
+    <link rel="stylesheet" href="/static/css/default.css" charset="utf-8">
 {{ end }}

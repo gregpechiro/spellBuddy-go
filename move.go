@@ -5,7 +5,17 @@ import (
 	"strconv"
 )
 
-func move() {
+func testSpells(count int) {
+	for i := 1; i <= count; i++ {
+		var spell Spell
+		id := strconv.Itoa(i)
+		if !db.Get("spell", id, &spell) {
+			fmt.Printf("Could not retrieve spell with id %s\n\n", id)
+		}
+	}
+}
+
+func move() int {
 
 	moveUsers()
 
@@ -13,10 +23,10 @@ func move() {
 
 	movePowerPointsSetup()
 
-	moveSpells()
+	i := moveSpells()
 
 	fmt.Println("move complete")
-
+	return i
 }
 
 func moveUsers() {
@@ -89,10 +99,10 @@ func movePowerPointsSetup() {
 	}
 }
 
-func moveSpells() {
+func moveSpells() int {
 	docs := db2.GetAll("spell")
 	fmt.Printf("moving %d spells...\n", len(docs))
-	//i := 0
+	i := 0
 	for _, doc := range docs {
 		id := strconv.FormatFloat(doc.Id, 'f', -1, 64)
 		spell := Spell{
@@ -138,6 +148,9 @@ func moveSpells() {
 		if id == "2900" {
 			spell.DescriptionHtml = "This spell makes certain other spells permanent. Depending on the spell, you must be of a minimum caster level and must expend a number of XP.<br><br>You can make the following spells permanent in regard to yourself.<br><span style=\"font-family:monospace\"><br><b>Spell</b>                   <b>Minimum Caster Level</b>      <b>XP Cost</b><br>Arcane sight	                11th              1,500 XP<br>Comprehend languages            9th                 500 XP<br>Darkvision                      10th              1,000 XP<br>Detect magic	                9th                 500 XP<br>Read magic                      9th                 500 XP<br>See invisibility                10th              1,000 XP<br>Tongues	                        11th              1,500 XP<br></span><br>You cast the desired spell and then follow it with the permanency spell. You cannot cast these spells on other creatures. This application of permanency can be dispelled only by a caster of higher level than you were when you cast the spell.<br><br>In addition to personal use, permanency can be used to make the following spells permanent on yourself, another creature, or an object (as appropriate).<br><span style=\"font-family:monospace\"><br><b>Spell</b>                   <b>Minimum Caster Level</b>      <b>XP Cost</b><br>Enlarge person                  9th                 500 XP<br>Magic fang                      9th                 500 XP<br>Magic fang, greater             11th              1,500 XP<br>Rary's telepathic bond*         13th              2,500 XP<br>Reduce person                   9th                 500 XP<br>Resistance                      9th                 500 XP<br></span><br>*Only bonds two creatures per casting of permanency.<br><br>Additionally, the following spells can be cast upon objects or areas only and rendered permanent.<br><span style=\"font-family:monospace\"><br><b>Spell</b>                   <b>Minimum Caster Level</b>      <b>XP Cost</b><br>Alarm                           9th                 500 XP<br>Animate objects                 14th              3,000 XP<br>Dancing lights                  9th                 500 XP<br>Ghost sound                     9th                 500 XP<br>Gust of wind                    11th              1,500 XP<br>Invisibility                    10th              1,000 XP<br>Magic mouth                     10th              1,000 XP<br>Mordenkainen's private sanctum	13th              2,500 XP<br>Phase door                      15th              3,500 XP<br>Prismatic sphere                17th              4,500 XP<br>Prismatic wall                  16th              4,000 XP<br>Shrink item                     11th              1,500 XP<br>Solid fog                       12th              2,000 XP<br>Stinking cloud                  11th              1,500 XP<br>Symbol of death                 16th              4,000 XP<br>Symbol of fear                  14th              3,000 XP<br>Symbol of insanity              16th              4,000 XP<br>Symbol of pain                  13th              2,500 XP<br>Symbol of persuasion            14th              3,000 XP<br>Symbol of sleep                 16th              4,000 XP<br>Symbol of stunning              15th              3,500 XP<br>Symbol of weakness              15th              3,500 XP<br>Teleportation circle            17th              4,500 XP<br>Wall of fire                    12th              2,000 XP<br>Wall of force                   13th              2,500 XP<br>Web                             10th              1,000 XP<br></span><br>Spells cast on other creatures, objects, or locations (not on you) are vulnerable to dispel magic as normal.<br><br>The DM may allow other selected spells to be made permanent. Researching this possible application of a spell costs as much time and money as independently researching the selected spell (see the Dungeon Master's Guide for details). If the DM has already determined that the application is not possible, the research automatically fails. Note that you never learn what is possible except by the success or failure of your research.<br><br>XP Cost: See tables above."
 		}
-		db.Set("spell", id, spell)
+		if db.Set("spell", id, spell) {
+			i++
+		}
 	}
+	return i
 }
