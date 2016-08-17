@@ -11,11 +11,12 @@ import (
 
 	"github.com/cagnosolutions/adb"
 	"github.com/cagnosolutions/web"
+	"github.com/gregpechiro/dbdbMod"
 )
 
 var mux = web.NewMux()
 
-//var db2 = dbdbMod.NewDataStore()
+var db2 = dbdbMod.NewDataStore()
 var db = adb.NewDB()
 var tmpl *web.TmplCache
 
@@ -34,14 +35,7 @@ func init() {
 		}
 		return string(b)
 	}
-	web.Funcs["isIn"] = func(src []string, target string) bool {
-		for _, s := range src {
-			if target == s {
-				return true
-			}
-		}
-		return false
-	}
+	web.Funcs["isIn"] = isIn
 	web.Funcs["lenEq"] = func(src []interface{}, target interface{}) bool {
 		switch target.(type) {
 		case int:
@@ -190,7 +184,7 @@ var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request
 		tmpl.Render(w, r, "pp-home.tmpl", web.Model{
 			"user":   user,
 			"setup":  powerPointsSetup,
-			"picked": getPicked(user.Picked),
+			"picked": getPicked(user.Picked, [][]string{}),
 		})
 		return
 	}
@@ -199,7 +193,7 @@ var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request
 	tmpl.Render(w, r, "home.tmpl", web.Model{
 		"user":   user,
 		"setup":  spellSetup,
-		"picked": getPicked(user.Picked),
+		"picked": getPicked(user.Picked, spellSetup.PreparedSpells),
 	})
 	return
 

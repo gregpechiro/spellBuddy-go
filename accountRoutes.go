@@ -52,6 +52,7 @@ var saveTheme = web.Route{"POST", "/theme", func(w http.ResponseWriter, r *http.
 	user.Theme = r.FormValue("theme")
 	//db2.Set("user", userId, user)
 	db.Set("user", userId, user)
-	web.SetSuccessRedirect(w, r, "/account", "Successfully updated theme")
+	//web.SetSuccessRedirect(w, r, "/account", "Successfully updated theme")
+	http.Redirect(w, r, "/account", 303)
 	return
 }}

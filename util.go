@@ -7,10 +7,20 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func isIn(src []string, target string) bool {
+	for _, s := range src {
+		if target == s {
+			return true
+		}
+	}
+	return false
+}
 
 func ajaxResponse(w http.ResponseWriter, m map[string]interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -35,20 +45,25 @@ func Ternary(comp bool, v, w interface{}) interface{} {
 	return w
 }
 
-func getPicked(userP [][]string) [][]Spell {
+func getPicked(userP [][]string, preped [][]string) [][]Spell {
 	var picked [][]Spell
 	if userP != nil {
-		pickedLvl := []Spell{}
-		for _, lvl := range userP {
-			pickedLvl = []Spell{}
+		//pickedLvl := []Spell{}
+		sortLvl := SpellCastSort{}
+		for i, lvl := range userP {
+			//pickedLvl = []Spell{}
+			sortLvl = SpellCastSort{}
 			if len(lvl) > 0 {
+				sortLvl.SpellIds = preped[i]
 				for _, spellId := range lvl {
 					var spell Spell
 					db.Get("spell", spellId, &spell)
-					pickedLvl = append(pickedLvl, spell)
+					//pickedLvl = append(pickedLvl, spell)
+					sortLvl.Spells = append(sortLvl.Spells, spell)
 				}
 			}
-			picked = append(picked, pickedLvl)
+			sort.Stable(sortLvl)
+			picked = append(picked, sortLvl.Spells)
 		}
 	}
 	return picked

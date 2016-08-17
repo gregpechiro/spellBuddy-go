@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type User struct {
 	Id          string     `json:"id"`
 	Name        string     `json:"name,omitempy"`
@@ -64,4 +66,28 @@ type Spell struct {
 	Custom               bool   `json:"custom"`
 	Public               bool   `json:"public"`
 	UserId               string `json:"userId,omitempty"`
+}
+
+type SpellCastSort struct {
+	SpellIds []string
+	Spells   []Spell
+}
+
+func (s SpellCastSort) Len() int {
+	return len(s.Spells)
+}
+
+func (s SpellCastSort) Less(i, j int) bool {
+	fmt.Println("less")
+	if isIn(s.SpellIds, s.Spells[i].Id) {
+		return true
+	}
+	if isIn(s.SpellIds, s.Spells[j].Id) {
+		return false
+	}
+	return true
+}
+
+func (s SpellCastSort) Swap(i, j int) {
+	s.Spells[i], s.Spells[j] = s.Spells[j], s.Spells[i]
 }
