@@ -3,7 +3,7 @@
 clear
 NODE="$1"
 DIR=`echo ${PWD##*/}`
-EXCLUDE=(".git" ".idea" "db" ".gitignore" "spellBuddy.tar" "deploy.sh" "clean.sh" "*.go")
+INCLUDE=("spellBuddy templates/ static/")
 
 if [ -f "${DIR}.tar" ]; then
 	echo "Removing old tar ${DIR}.tar..."
@@ -22,11 +22,11 @@ fi
 
 echo "Creating tar ${DIR}.tar..."
 
-for item in ${EXCLUDE[*]}; do
-	TOGETHER="$TOGETHER --exclude $item"
-done
+#for item in ${EXCLUDE[*]}; do
+#	TOGETHER="$TOGETHER --exclude $item"
+#done
 
-tar cf $DIR.tar * $TOGETHER
+tar cf $DIR.tar $INCLUDE
 if [ ! -f "$DIR.tar" ]; then
 	echo "Create $DIR.tar failed."
 	exit 1

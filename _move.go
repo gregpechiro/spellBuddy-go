@@ -75,8 +75,10 @@ func moveSpellSetup() {
 
 		for _, fl := range doc.Data["PreparedSpells"].([]interface{}) {
 			var sl []string
-			for _, f := range fl.([]interface{}) {
-				sl = append(sl, strconv.FormatFloat(f.(float64), 'f', -1, 64))
+			if fl != nil {
+				for _, f := range fl.([]interface{}) {
+					sl = append(sl, strconv.FormatFloat(f.(float64), 'f', -1, 64))
+				}
 			}
 			ss.PreparedSpells = append(ss.PreparedSpells, sl)
 		}
