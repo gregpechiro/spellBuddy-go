@@ -1,7 +1,7 @@
 package main
 
 type User struct {
-	Id          string     `json:"id,omitempy"`
+	Id          string     `json:"id"`
 	Name        string     `json:"name,omitempy"`
 	Username    string     `json:"username,omitempy" auth:"username"`
 	Password    string     `json:"password,omitempy" auth:"password"`
@@ -46,21 +46,21 @@ type Spell struct {
 	Subschool            string `json:"subschool,omitempty"`
 	Target               string `json:"target,omitempty"`
 	Components           string `json:"components,omitempty"`
-	ArcaneFocusComponent bool   `json:"arcaneFocusComponent"`
-	CorruptComponent     bool   `json:"corruptComponent"`
-	DivineFocusComponent bool   `json:"divineFocusComponent"`
-	MaterialComponent    bool   `json:"materialComponent"`
-	MetaBreathComponent  bool   `json:"metaBreathComponent"`
-	SomaticComponent     bool   `json:"somaticComponent"`
-	TrueNameComponent    bool   `json:"trueNameComponent"`
-	VerbalComponent      bool   `json:"verbalComponent"`
-	XPComponent          bool   `json:"xpComponent"`
+	ArcaneFocusComponent bool   `json:"arcaneFocusComponent,omitempty"`
+	CorruptComponent     bool   `json:"corruptComponent,omitempty"`
+	DivineFocusComponent bool   `json:"divineFocusComponent,omitempty"`
+	MaterialComponent    bool   `json:"materialComponent,omitempty"`
+	MetaBreathComponent  bool   `json:"metaBreathComponent,omitempty"`
+	SomaticComponent     bool   `json:"somaticComponent,omitempty"`
+	TrueNameComponent    bool   `json:"trueNameComponent,omitempty"`
+	VerbalComponent      bool   `json:"verbalComponent,omitempty"`
+	XPComponent          bool   `json:"xpComponent,omitempty"`
 	Displays             string `json:"displays,omitempty"`
-	AuditoryDisplay      bool   `json:"auditoryDisplay"`
-	MaterialDisplay      bool   `json:"materialDisplay"`
-	MentalDisplay        bool   `json:"mentalDisplay"`
-	OlfactoryDisplay     bool   `json:"olfactoryDisplay"`
-	VisualDisplay        bool   `json:"visualDisplay"`
+	AuditoryDisplay      bool   `json:"auditoryDisplay.omitempty"`
+	MaterialDisplay      bool   `json:"materialDisplay.omitempty"`
+	MentalDisplay        bool   `json:"mentalDisplay.omitempty"`
+	OlfactoryDisplay     bool   `json:"olfactoryDisplay.omitempty"`
+	VisualDisplay        bool   `json:"visualDisplay.omitempty"`
 	Custom               bool   `json:"custom"`
 	Public               bool   `json:"public"`
 	UserId               string `json:"userId,omitempty"`

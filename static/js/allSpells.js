@@ -89,29 +89,29 @@ function genResults(filteredSpells) {
                 '<div id="dndSpell' + spell.id + '" class="panel-collapse collapse">'+
                     '<div class="panel-body description-panel">' +
                         '<h4>' + spell.school +
-                            ((spell.subschool != '') ? '<span> (' + spell.subschool + ')</span>' : '') +
-                            ((spell.descriptors != '') ? '<span> [' + spell.descriptors + ']</span>' : '') +
+                            ((spell.subschool !== '' && spell.subschool !== undefined) ? '<span> (' + spell.subschool + ')</span>' : '') +
+                            ((spell.descriptors !== '' && spell.descriptors !== undefined) ? '<span> [' + spell.descriptors + ']</span>' : '') +
                         '</h4>' +
-                        ((spell.rulebook != '') ? '<p>' +
-                            spell.rulebook + ((spell.page != 0 ) ? '<span> p. ' + spell.page + '</span>' : '') +
+                        ((spell.rulebook !== '' && spell.rulebook !== undefined) ? '<p>' +
+                            spell.rulebook + ((spell.page !== 0 ) ? '<span> p. ' + spell.page + '</span>' : '') +
                         '</p>' : '') +
                         '<table>' +
                             '<tbody>' +
-                                ((spell.components != '') ? '<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">' + spell.components + '</td></tr>' : '') +
-                                ((spell.displays != '') ? '<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">' + spell.displays + '</td></tr>' : '') +
-                                ((spell.castingTime != '') ? '<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">' + spell.castingTime + '</td></tr>' : '') +
-                                ((spell.spellRange != '') ? '<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">' + spell.spellRange + '</td></tr>' : '') +
-                                ((spell.area != '') ? '<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">' + spell.area + '</td></tr>' : '') +
-                                ((spell.effect != '') ? '<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">' + spell.effect + '</td></tr>' : '') +
-                                ((spell.target != '') ? '<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">' + spell.target + '</td></tr>' : '') +
-                                ((spell.duration != '') ? '<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">' + spell.duration + '</td></tr>' : '') +
-                                ((spell.savingThrow != '') ? '<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">' + spell.savingThrow + '</td></tr>' : '') +
-                                ((spell.spellResistance != '') ? '<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">' + spell.spellResistance + '</td></tr>' : '') +
+                                ((spell.components !== '' && spell.components !== undefined) ? '<tr><td class="text-right"><strong>Components:</strong> &nbsp;</td><td class="text-left">' + spell.components + '</td></tr>' : '') +
+                                ((spell.displays !== '' && spell.displays !== undefined) ? '<tr><td class="text-right"><strong>Displays:</strong> &nbsp;</td><td class="text-left">' + spell.displays + '</td></tr>' : '') +
+                                ((spell.castingTime !== '' && spell.castingTime !== undefined) ? '<tr><td class="text-right"><strong>Casting Time:</strong> &nbsp;</td><td class="text-left">' + spell.castingTime + '</td></tr>' : '') +
+                                ((spell.spellRange !== '' && spell.spellRange !== undefined) ? '<tr><td class="text-right"><strong>Range:</strong> &nbsp;</td><td class="text-left">' + spell.spellRange + '</td></tr>' : '') +
+                                ((spell.area !== '' && spell.area !== undefined) ? '<tr><td class="text-right"><strong>Area:</strong> &nbsp;</td><td class="text-left">' + spell.area + '</td></tr>' : '') +
+                                ((spell.effect !== '' && spell.effect !== undefined) ? '<tr><td class="text-right"><strong>Effect:</strong> &nbsp;</td><td class="text-left">' + spell.effect + '</td></tr>' : '') +
+                                ((spell.target !== '' && spell.target !== undefined) ? '<tr><td class="text-right"><strong>Target:</strong> &nbsp;</td><td class="text-left">' + spell.target + '</td></tr>' : '') +
+                                ((spell.duration !== '' && spell.duration !== undefined) ? '<tr><td class="text-right"><strong>Duration:</strong> &nbsp;</td><td class="text-left">' + spell.duration + '</td></tr>' : '') +
+                                ((spell.savingThrow !== '' && spell.savingThrow !== undefined) ? '<tr><td class="text-right"><strong>Saving Throw:</strong> &nbsp;</td><td class="text-left">' + spell.savingThrow + '</td></tr>' : '') +
+                                ((spell.spellResistance !== '' && spell.spellResistance !== undefined) ? '<tr><td class="text-right"><strong>Spell Resistance:</strong> &nbsp;</td><td class="text-left">' + spell.spellResistance + '</td></tr>' : '') +
                             '</tbody>' +
                         '</table>' +
                         '<br>' +
                         '<span>' +
-                            '<div ' + ((spell.custom) ? 'class="description"' : '') + '>' + spell.descriptionHtml + '</div>' +
+                            '<div ' + ((spell.custom || spell.id === '2900') ? 'class="description"' : '') + '>' + spell.descriptionHtml + '</div>' +
                         '</span>' +
                     '</div>' +
                 '</div>'+

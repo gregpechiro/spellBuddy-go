@@ -11,16 +11,17 @@ import (
 
 	"github.com/cagnosolutions/adb"
 	"github.com/cagnosolutions/web"
+	"github.com/gregpechiro/dbdbMod"
 )
 
 var mux = web.NewMux()
 
-//var db2 = dbdbMod.NewDataStore()
+var db2 = dbdbMod.NewDataStore()
 var db = adb.NewDB()
 var tmpl *web.TmplCache
 
 func init() {
-	//go dbdbMod.Serve(db2, ":9999", "spell-buddy")
+	go dbdbMod.Serve(db2, ":9999", "spell-buddy")
 	//web.NewCookieSalt()
 	web.SESSDUR = time.Minute * 60 * 3
 	web.Funcs["add"] = func(i, j int) int {
@@ -75,15 +76,18 @@ func init() {
 }
 
 func main() {
-	//db2.AddStore("spell")
-	//db2.AddStore("user")
-	//db2.AddStore("spell-setup")
-	//db2.AddStore("pp-setup")
+	db2.AddStore("spell")
+	db2.AddStore("user")
+	db2.AddStore("spell-setup")
+	db2.AddStore("pp-setup")
 
 	db.AddStore("spell")
 	db.AddStore("user")
 	db.AddStore("spell-setup")
 	db.AddStore("pp-setup")
+
+	move()
+	testSpells()
 
 	// auth routed
 	mux.AddRoutes(login, loginPost, logout)

@@ -12,6 +12,16 @@ import (
 	"time"
 )
 
+func testSpells() {
+	for i := 1; i <= 4919; i++ {
+		var spell Spell
+		id := strconv.Itoa(i)
+		if !db.Get("spell", id, &spell) {
+			fmt.Printf("Could not retrieve spell with id %s\n\n", id)
+		}
+	}
+}
+
 func ajaxResponse(w http.ResponseWriter, m map[string]interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

@@ -3,7 +3,7 @@ function search() {
     if (searchText != '') {
         if (spells.length > 0) {
             spellSet = spells.filter(filterSearch);
-            spellSet.sort(orderDoc);
+            spellSet.sort(orderSpell);
         }
     } else {
         setSpellSet();
