@@ -6,13 +6,26 @@ import (
 )
 
 func testSpells(count int) {
+	var spells []Spell
+	db.All("spell", &spells)
+	if len(spells) != count {
+		fmt.Printf("expected number of spell is different than current number of spells\nExpected: %d, Current: %d", count, len(spells))
+		return
+	}
+	c := 0
 	for i := 1; i <= count; i++ {
 		var spell Spell
 		id := strconv.Itoa(i)
 		if !db.Get("spell", id, &spell) {
+			c++
 			fmt.Printf("Could not retrieve spell with id %s\n\n", id)
 		}
 	}
+	if c != 0 {
+		fmt.Printf("Failed to retrieve %d spells\n", c)
+		return
+	}
+	fmt.Println("Retrieved all spells set")
 }
 
 func move() int {

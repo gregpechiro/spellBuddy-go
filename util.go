@@ -69,6 +69,30 @@ func getPicked(userP [][]string, preped [][]string) [][]Spell {
 	return picked
 }
 
+func getPickedPP(userP [][]string) [][]Spell {
+	var picked [][]Spell
+	if userP != nil {
+		pickedLvl := []Spell{}
+		//sortLvl := SpellCastSort{}
+		for _, lvl := range userP {
+			pickedLvl = []Spell{}
+			//sortLvl = SpellCastSort{}
+			if len(lvl) > 0 {
+				//sortLvl.SpellIds = preped[i]
+				for _, spellId := range lvl {
+					var spell Spell
+					db.Get("spell", spellId, &spell)
+					pickedLvl = append(pickedLvl, spell)
+					//sortLvl.Spells = append(sortLvl.Spells, spell)
+				}
+			}
+			//sort.Stable(sortLvl)
+			picked = append(picked, pickedLvl)
+		}
+	}
+	return picked
+}
+
 // func getPicked2(userP [][]float64) [][]interface{} {
 // 	var picked [][]interface{}
 // 	if userP != nil {

@@ -171,11 +171,13 @@
 					l.removeClass('label-default');
 					l.addClass('label-primary');
 					letter = l.attr('data-let');
+					page = 0;
 					setSpellSet();
 					genResults(paginate(spellSet));
 				});
 				$('select#letters-dd').change(function() {
 					letter = this.value;
+					page = 0;
 					setSpellSet();
 					genResults(paginate(spellSet));
 				});

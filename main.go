@@ -21,7 +21,7 @@ var db = adb.NewDB()
 var tmpl *web.TmplCache
 
 func init() {
-	//go dbdbMod.Serve(db2, ":9999", "spell-buddy")
+	go dbdbMod.Serve(db2, ":9999", "spell-buddy")
 	//web.NewCookieSalt()
 	web.SESSDUR = time.Minute * 60 * 3
 	web.Funcs["add"] = func(i, j int) int {
@@ -69,18 +69,27 @@ func init() {
 }
 
 func main() {
-	//db2.AddStore("spell")
-	//db2.AddStore("user")
-	//db2.AddStore("spell-setup")
-	//db2.AddStore("pp-setup")
+	db2.AddStore("spell")
+	db2.AddStore("user")
+	db2.AddStore("spell-setup")
+	db2.AddStore("pp-setup")
 
 	db.AddStore("spell")
 	db.AddStore("user")
 	db.AddStore("spell-setup")
 	db.AddStore("pp-setup")
 
-	//i := move()
-	//testSpells(i)
+	i := move()
+	testSpells(i)
+
+	//var spell Spell
+	//ok := db.Get("spell", "14", &spell)
+	//fmt.Printf("Get 14 %v\n", ok)
+
+	//keys := db.Keys("spell")
+	//for _, key := range keys {
+	//	fmt.Println(key)
+	//}
 
 	// auth routed
 	mux.AddRoutes(login, loginPost, logout)
@@ -184,7 +193,7 @@ var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request
 		tmpl.Render(w, r, "pp-home.tmpl", web.Model{
 			"user":   user,
 			"setup":  powerPointsSetup,
-			"picked": getPicked(user.Picked, [][]string{}),
+			"picked": getPickedPP(user.Picked),
 		})
 		return
 	}

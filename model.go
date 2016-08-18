@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type User struct {
 	Id          string     `json:"id"`
 	Name        string     `json:"name,omitempy"`
@@ -78,7 +76,6 @@ func (s SpellCastSort) Len() int {
 }
 
 func (s SpellCastSort) Less(i, j int) bool {
-	fmt.Println("less")
 	if isIn(s.SpellIds, s.Spells[i].Id) {
 		return true
 	}
