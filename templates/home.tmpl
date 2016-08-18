@@ -12,7 +12,7 @@
 			{{ template "alerts.tmpl" . }}
 
             <div class="row">
-                <div class="col-lg-offset-1 col-lg-10">
+                <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -40,15 +40,16 @@
                                     <div id="prepareCollapse" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <div class="row text-center">
-												<div class="row">
+												<div id="picked1" class="row">
 													{{ $prepared := .setup.PreparedSpells }}
 													{{ $spd := .setup.SpellsPerDay}}
 													{{ range $level, $spells := .picked }}
 															{{ $prepLvl := index $prepared $level }}
 															{{ $spdLvl := index $spd $level }}
-		                                                	<div class="col-lg-2 col-xs-12 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}">
-																<div class="col-xs-12">
+		                                                	<div class="col-lg-2 col-xs-12 {{ if eq $level 0 5 }}col-lg-offset-1{{ end }}" style="padding:5px;">
+																<div class="col-xs-12 level" style="border: 1px solid white;">
 		                                                    	<label>Level {{ $level }}</label>
+																{{ if not $spells}}<p>No Spells</p>{{ end }}
 																{{ range $spell := $spells }}
 		                                                    		<div class="checkbox text-left">
 		                                                        		<label>
@@ -60,20 +61,18 @@
 		                                                	</div>
 															{{ if eq $level 4 }}
 												</div>
-												<div class="row">
+												<div id="picked2" class="row">
 															{{ end }}
 													{{ end }}
 												</div>
 												<div class="row">
-                                                	<div class="col-lg-offset-1 col-lg-10 col-xs-12">
-														<div class="col-xs-12">
-															<form id="rest" action="/rest" method="post">
-																<input type="hidden" name="userId" value="{{ .user.Id }}">
-																<input type="hidden" name="setupId" value="{{ .setup.Id }}">
-																<input type="hidden" name="prepared">
-	                                                    		<button id="rest" class="btn btn-primary btn-block">Rest</button>
-															</form>
-														</div>
+                                                	<div class="col-lg-offset-1 col-lg-10 col-xs-12" style="padding:5px;">
+														<form id="rest" action="/rest" method="post">
+															<input type="hidden" name="userId" value="{{ .user.Id }}">
+															<input type="hidden" name="setupId" value="{{ .setup.Id }}">
+															<input type="hidden" name="prepared">
+	                                                    	<button id="rest" class="btn btn-primary btn-block" style="margin-top:10px;">Rest</button>
+														</form>
                                                 	</div>
 												</div>
                                             </div>
@@ -85,8 +84,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-offset-1 col-lg-10">
+            <div class="row" style="margin-bottom:20px;">
+                <div class="col-lg-12">
                     <div class="panel-group" id="spellsAccordion" role="tablist" aria-multiselectable="true">
 						{{ $setup := .setup }}
 						{{ $remaining := .setup.RemainingSpells }}
@@ -169,6 +168,32 @@
 		{{ template "scripts.tmpl" }}
 		<script src="/static/js/util.js" charset="utf-8"></script>
 		<script type="text/javascript">
+			var setHeight = false;
+			function test() {
+				var size = 0;
+				var l = $('#picked1').find('.level');
+				for (var i = 0; i < l.length; i++) {
+    				if ($(l[i]).height() > size) {
+						size = $(l[i]).height();
+					}
+				}
+				for (var i = 0; i < l.length; i++) {
+					$(l[i]).height(size);
+				}
+
+				size = 0;
+				l = $('#picked2').find('.level');
+				for (var i = 0; i < l.length; i++) {
+    				if ($(l[i]).height() > size) {
+						size = $(l[i]).height();
+					}
+				}
+				for (var i = 0; i < l.length; i++) {
+					$(l[i]).height(size);
+				}
+
+			}
+
 			var prepared = {{ if .setup.PreparedSpells }}{{ json .setup.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
 			var spd = {{ if .setup.SpellsPerDay }}{{ json .setup.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
 			$(document).ready(function() {
@@ -204,6 +229,36 @@
 					$('input[name="prepared"]').val(JSON.stringify(prepared));
 					console.log($('input[name="prepared"]').val());
 					$('form#rest').submit();
+				});
+
+				$('#prepareCollapse').on('show.bs.collapse', function() {
+					if (!setHeight) {
+						window.setTimeout(function() {
+
+							var size = 0;
+							var l = $('#picked1').find('.level');
+							for (var i = 0; i < l.length; i++) {
+		    					if ($(l[i]).height() > size) {
+									size = $(l[i]).height();
+								}
+							}
+							for (var i = 0; i < l.length; i++) {
+								$(l[i]).height(size);
+							}
+
+							size = 0;
+							l = $('#picked2').find('.level');
+							for (var i = 0; i < l.length; i++) {
+		    					if ($(l[i]).height() > size) {
+									size = $(l[i]).height();
+								}
+							}
+							for (var i = 0; i < l.length; i++) {
+								$(l[i]).height(size);
+							}
+						}, 10)
+					}
+
 				});
 			});
 		</script>

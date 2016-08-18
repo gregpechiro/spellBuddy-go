@@ -285,7 +285,8 @@ span.label-primary {
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
 .nav-tabs>li.active>a:hover,
-.nav-tabs>li>a:hover {
+.nav-tabs>li>a:hover,
+.nav-tabs>li>a:focus {
     color: #fff;
     background-color: #ffbf00;
     border: 1px solid #ffbf00;
@@ -313,8 +314,14 @@ span.label-primary {
 .form-control:focus, .btn:focus, .btn:focus:active, a:focus {
     border-color: #fffc00;
     outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgba(255,252,0,.6);
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(255,252,0,.6);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgb(255,252,0);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(255,252,0);
+}
+
+:focus {
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgb(255,252,0);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(255,252,0);
 }
 
 select.decorated option:hover {
@@ -344,31 +351,6 @@ select.decorated option:hover {
 }
 .form-control:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
   color: #ffbf00;
-}
-
-/* alerts */
-
-.close {
-    opacity: 1;
-    text-shadow: none;
-}
-
-.alert-danger {
-    color: #ff0000;
-    background-color: #690000;
-    border: 3px solid #ff0000;
-}
-
-.alert-success {
-    color: #00ff00;
-    background-color: #005A00;
-    border: 3px solid #00ff00;
-}
-
-.alert-info {
-    color: #0000ff;
-    background-color: #00005A;
-    border: 3px solid #0000ff;
 }
 
 /* navbar */

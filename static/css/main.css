@@ -1,3 +1,28 @@
+/* alerts */
+
+.close {
+    opacity: 1;
+    text-shadow: none;
+}
+
+.alert-danger {
+    color: #ff0000;
+    background-color: #690000;
+    border: 3px solid #ff0000;
+}
+
+.alert-success {
+    color: #00ff00;
+    background-color: #005A00;
+    border: 3px solid #00ff00;
+}
+
+.alert-info {
+    color: #0000ff;
+    background-color: #00005A;
+    border: 3px solid #0000ff;
+}
+
 .panel-group {
      margin-bottom: 0;
 }

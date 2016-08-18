@@ -285,7 +285,8 @@ span.label-primary {
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
 .nav-tabs>li.active>a:hover,
-.nav-tabs>li>a:hover {
+.nav-tabs>li>a:hover,
+.nav-tabs>li>a:focus {
     color: #fff;
     background-color: #ef721e;
     border: 1px solid #ef721e;
@@ -317,6 +318,12 @@ span.label-primary {
             box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(239, 114, 30);
 }
 
+:focus {
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px  rgb(239, 114, 30);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgb(239, 114, 30);
+}
+
 select.decorated option:hover {
     box-shadow: 0 0 10px 100px #1882A8 inset;
 }
@@ -344,31 +351,6 @@ select.decorated option:hover {
 }
 .form-control:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
   color: #ef721e;
-}
-
-/* alerts */
-
-.close {
-    opacity: 1;
-    text-shadow: none;
-}
-
-.alert-danger {
-    color: #ff0000;
-    background-color: #690000;
-    border: 3px solid #ff0000;
-}
-
-.alert-success {
-    color: #00ff00;
-    background-color: #005A00;
-    border: 3px solid #00ff00;
-}
-
-.alert-info {
-    color: #0000ff;
-    background-color: #00005A;
-    border: 3px solid #0000ff;
 }
 
 /* navbar */
