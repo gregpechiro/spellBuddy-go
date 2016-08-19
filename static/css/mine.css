@@ -368,6 +368,14 @@ select.decorated option:hover {
     color: #928970;
 }
 
+/* modal */
+
+.modal-content {
+    background-color: rgba(62,55,33,.75);
+    border: 1px solid #fff;
+    color: #ef721e;
+}
+
 /* misc */
 
 a {

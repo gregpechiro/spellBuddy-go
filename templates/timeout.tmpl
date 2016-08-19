@@ -1,0 +1,68 @@
+
+
+
+<div class="modal fade" id="sessionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-body clearfix">
+                <div class="text-center">
+                    <h4>Your session is about to expire</h4>
+                    <p>
+                        <i class="fa fa-clock-o fa-5x"></i>
+                    </p>
+                    <p>
+                        <b id="session-msg"></b>
+                    </p>
+                    <div class="col-lg-6">
+                        <button class="btn btn-block btn-default" id="stay">Stay Logged In</button>
+                    </div>
+                    <div class="col-lg-6">
+                        <button class="btn btn-block btn-danger" id="logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="/static/js/session-monitor.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+
+    var sessionLength = 30;
+    var preTimeoutWarning = 2;
+    var pingInterval = 1;
+
+    // Configure and start the session timeout monitor
+    sessMon = sessionMonitor({
+        // Subtract 1 minute to ensure the backend doesn't expire the session first
+        sessionLifetime: (sessionLength - 1) * 60 * 1000,
+        timeBeforeWarning: preTimeoutWarning * 60 * 1000,
+        minPingInterval: pingInterval * 60 * 1000,
+        pingUrl: '/updateSession',
+        logoutUrl: '/logout',
+        timeoutUrl: '/logout',
+        // The "mouseup" event was used instead of "click" because some of the
+        // inner elements on some pages have click event handlers that stop propagation.
+        activityEvents: 'keyup',
+        onbeforetimeout: function() {
+            sessionAlert();
+        },
+        onwarning: function() {
+            $('b#session-msg').text('Your session will expire in ' + Math.round(sessMon.timeBeforeWarning / 60 / 1000) + ' minutes.');
+            $('#sessionModal').modal('show');
+        }
+    });
+
+    $('button#stay').click(function() {
+        sessMon.extendsess();
+        $('#sessionModal').modal('hide');
+    });
+
+    $('button#logout').click(function() {
+        sessMon.logout();
+    });
+
+    window.sessMon = sessMon;
+</script>

@@ -99,6 +99,8 @@ func main() {
 	// main app routes
 	mux.AddSecureRoutes(USER, home, rest, cast, pp, ppRest, ppCast)
 
+	mux.AddSecureRoutes(USER, updateSession)
+
 	http.ListenAndServe(":8080", mux)
 }
 
@@ -151,7 +153,12 @@ var loginPost = web.Route{"POST", "/login", func(w http.ResponseWriter, r *http.
 
 var logout = web.Route{"GET", "/logout", func(w http.ResponseWriter, r *http.Request) {
 	web.Logout(w)
-	web.SetSuccessRedirect(w, r, "/", "See you next time")
+	//web.SetSuccessRedirect(w, r, "/", "See you next time")
+	http.Redirect(w, r, "/", 303)
+}}
+
+var updateSession = web.Route{"POST", "/updateSession", func(w http.ResponseWriter, r *http.Request) {
+	return
 }}
 
 var home = web.Route{"GET", "/home", func(w http.ResponseWriter, r *http.Request) {
