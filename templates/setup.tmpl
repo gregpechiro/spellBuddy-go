@@ -152,6 +152,7 @@
 				setSpellSet();
 				genResults(paginate(spellSet));
 				$('span.letter').click(function() {
+					$('input#search').val('');
 					l = $(this);
 					$('span.letter').removeClass('label-primary');
 					$('span.letter').addClass('label-default');
@@ -163,6 +164,7 @@
 					genResults(paginate(spellSet));
 				});
 				$('select#letters-dd').change(function() {
+					$('input#search').val('');
 					letter = this.value;
 					page = 0;
 					setSpellSet();
