@@ -22,7 +22,7 @@ var tmpl *web.TmplCache
 func init() {
 	//go dbdbMod.Serve(db2, ":9999", "spell-buddy")
 	//web.NewCookieSalt()
-	web.SESSDUR = time.Minute * 60 * 3
+	web.SESSDUR = time.Minute * 30
 	web.Funcs["add"] = func(i, j int) int {
 		return i + j
 	}
@@ -241,6 +241,7 @@ var ppRest = web.Route{"POST", "/pp-rest", func(w http.ResponseWriter, r *http.R
 }}
 
 var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Request) {
+	resp := map[string]interface{}{}
 	userId := web.GetSess(r, "id")
 	setupId := r.FormValue("setupId")
 	level, err := strconv.Atoi(r.FormValue("level"))
@@ -250,18 +251,26 @@ var cast = web.Route{"POST", "/cast", func(w http.ResponseWriter, r *http.Reques
 	if spellSetup.UserId != userId || err != nil || level < 0 || level > 9 {
 		fmt.Println("userId: ", userId)
 		fmt.Println("spellId: ", setupId)
-		web.SetErrorRedirect(w, r, "/home", "Error casting")
+		//web.SetErrorRedirect(w, r, "/home", "Error casting")
+		resp["success"] = false
+		resp["msg"] = "Error Casting"
+		ajaxResponse(w, resp)
 		return
 	}
 	spellSetup.RemainingSpells[level]--
 	//db2.Set("spell-setup", setupId, spellSetup)
 	db.Set("spell-setup", setupId, spellSetup)
-	http.Redirect(w, r, "/home", 303)
+	resp["success"] = true
+	resp["remaining"] = spellSetup.RemainingSpells[level]
+	resp["level"] = level
+	ajaxResponse(w, resp)
+	//http.Redirect(w, r, "/home", 303)
 	return
 
 }}
 
 var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.Request) {
+	resp := map[string]interface{}{}
 	userId := web.GetSess(r, "id")
 	setupId := r.FormValue("setupId")
 	pp, err := strconv.Atoi(r.FormValue("pp"))
@@ -271,27 +280,43 @@ var ppCast = web.Route{"POST", "/pp-cast", func(w http.ResponseWriter, r *http.R
 	//fmt.Println())
 	if err != nil {
 		log.Printf("ppCast() >> strconv.Atoi(): %v\n", err)
-		web.SetErrorRedirect(w, r, "/home", "Error casting")
+		//web.SetErrorRedirect(w, r, "/home", "Error casting")
+		resp["success"] = false
+		resp["msg"] = "Error casting spell"
+		ajaxResponse(w, resp)
 		return
 	}
 	if powerPointsSetup.UserId != userId {
 		fmt.Println("userId: ", userId)
 		fmt.Println("setup userId: ", powerPointsSetup.UserId)
-		web.SetErrorRedirect(w, r, "/home", "Error casting")
+		//web.SetErrorRedirect(w, r, "/home", "Error casting")
+		resp["success"] = false
+		resp["msg"] = "Error casting spell"
+		ajaxResponse(w, resp)
+		return
 	}
 	if pp > powerPointsSetup.RemainingPowerPoints {
-		web.SetErrorRedirect(w, r, "/home", "You do not have enough power points left to cast that!")
+		//web.SetErrorRedirect(w, r, "/home", "You do not have enough power points left to cast that!")
+		resp["success"] = false
+		resp["msg"] = "You do not have enough power points left to cast that!"
+		ajaxResponse(w, resp)
 		return
 	}
 	if pp < 0 {
-		web.SetErrorRedirect(w, r, "/home", "You cannot cast negative power points")
+		//web.SetErrorRedirect(w, r, "/home", "You cannot cast negative power points")
+		resp["success"] = false
+		resp["msg"] = "You cannot cast negative power points"
+		ajaxResponse(w, resp)
 		return
 	}
 	db.Get("pp-setup", setupId, &powerPointsSetup)
 	powerPointsSetup.RemainingPowerPoints -= pp
 	//db2.Set("pp-setup", setupId, ppSetup)
 	db.Set("pp-setup", setupId, powerPointsSetup)
-	http.Redirect(w, r, "/home", 303)
+	//http.Redirect(w, r, "/home", 303)
+	resp["success"] = true
+	resp["remaining"] = powerPointsSetup.RemainingPowerPoints
+	ajaxResponse(w, resp)
 	return
 
 }}

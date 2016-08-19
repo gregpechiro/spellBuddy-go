@@ -100,7 +100,7 @@
 		                                    <a data-toggle="collapse" data-parent="#spellsAccordion" data-target="#level-{{ $level }}-colapse" style="cursor:pointer;">
 		                                        Level {{ $level }} Spells
 		                                    </a>
-		                                    <span class="pull-right">{{ index $setup.RemainingSpells $level }} Spells left today</span>
+		                                    <span class="pull-right"><span id="remaining-{{ $level }}">{{ index $setup.RemainingSpells $level }}</span> Spells left today</span>
 		                                </h4>
 		                            </div>
 		                            <div id="level-{{ $level }}-colapse" class="panel-collapse collapse">
@@ -116,10 +116,10 @@
 																<div class="col-lg-1 col-lg-offset-5 pull-right">
 																	{{ $in := isIn $prepLvl $spell.Id }}
 																	{{ $hasRemaining := gt $remainingLvl 0 }}
-																	<form action="/cast" method="post">
+																	<form action="/cast" class="cast" method="post">
 																		<input type="hidden" name="level" value="{{ $level }}">
 																		<input type="hidden" name="setupId" value="{{ $setup.Id }}">
-					                                            		<button class="btn btn-default btn-xs"{{ if eq false $in $hasRemaining }}disabled="disabled"{{ end }}>Cast</button>
+					                                            		<button class="btn btn-default btn-xs cast-{{ $level }}"{{ if eq false $in $hasRemaining }}disabled="disabled"{{ end }}>Cast</button>
 																	</form>
 																</div>
 					                                        </h4>
@@ -169,34 +169,32 @@
 		<script src="/static/js/util.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			var setHeight = false;
-			function test() {
-				var size = 0;
-				var l = $('#picked1').find('.level');
-				for (var i = 0; i < l.length; i++) {
-    				if ($(l[i]).height() > size) {
-						size = $(l[i]).height();
-					}
-				}
-				for (var i = 0; i < l.length; i++) {
-					$(l[i]).height(size);
-				}
-
-				size = 0;
-				l = $('#picked2').find('.level');
-				for (var i = 0; i < l.length; i++) {
-    				if ($(l[i]).height() > size) {
-						size = $(l[i]).height();
-					}
-				}
-				for (var i = 0; i < l.length; i++) {
-					$(l[i]).height(size);
-				}
-
-			}
 
 			var prepared = {{ if .setup.PreparedSpells }}{{ json .setup.PreparedSpells }}{{ else }}[[],[],[],[],[],[],[],[],[],[]]{{ end }};
 			var spd = {{ if .setup.SpellsPerDay }}{{ json .setup.SpellsPerDay }}{{ else }}[0,0,0,0,0,0,0,0,0,0]{{ end }}
 			$(document).ready(function() {
+				$('form.cast').submit(function(e) {
+					e.preventDefault();
+					$.ajax({
+			            type: 'POST',
+			            url: '/cast',
+			            data: $(this).serialize(),
+			            success: function(resp) {
+			                if (!resp.success) {
+			                    showError(resp.msg);
+			                    return
+			                }
+							$('span#remaining-' + resp.level).text(resp.remaining);
+							if (resp.remaining < 1) {
+								$('button.cast-' + resp.level).attr('disabled', 'disabled');
+							}
+			            },
+			            error: function() {
+			                showError("Error casting spell");
+			            }
+			        });
+				});
+
 				if (prepared == null) {
 					prepared = [[],[],[],[],[],[],[],[],[],[]];
 				}

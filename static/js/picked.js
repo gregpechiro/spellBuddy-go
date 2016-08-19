@@ -1,3 +1,5 @@
+var index
+
 function renderPicked() {
     $('#spellAccordion').html('');
     for (var i = 0; i < picked.length; i ++) {
@@ -5,12 +7,12 @@ function renderPicked() {
             var panel = $('<div class="panel panel-default">' +
                 '<div class="panel-heading" role="tab" id="heading-' + i + '">' +
                     '<h4 class="panel-title">' +
-                        '<a data-toggle="collapse" data-parent="#spellAccordion" style="cursor:pointer;" data-target="#collapse-' + i + '">' +
+                        '<a data-toggle="collapse" data-parent="#spellAccordion" class="heading-picked" style="cursor:pointer;" data-target="#collapse-' + i + '" data-index="' + i + '">' +
                             'Level ' + i + ' Spells'+
                         '</a>' +
                     '</h4>' +
                 '</div>' +
-                '<div id="collapse-' + i + '" class="panel-collapse collapse">' +
+                '<div id="collapse-' + i + '" class="panel-collapse collapse ' + ((i === index) ? 'in' : '') + '">' +
                     '<div id="body-' + i + '" class="panel-body">' +
                     '</div>' +
                 '</div>' +
@@ -32,6 +34,14 @@ function renderPicked() {
             $('#spellAccordion').append(panel)
         }
     }
+    $('a.heading-picked').click(function() {
+        var idx =+ $(this).attr('data-index');
+        if (index == idx) {
+            index = '';
+        } else {
+            index = idx;
+        }
+    });
     $('button#delete-spell').click(function() {
         var dat = 'userId=' + userId + '&spellLvl=' + $(this).attr('data-lvl') + '&idx=' + $(this).attr('data-idx');
         $.ajax({

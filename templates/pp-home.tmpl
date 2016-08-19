@@ -20,7 +20,7 @@
                         <div class="panel-body">
                             <div class="text-center">
                                 <label>Total Power Points: &nbsp;</label>{{ .setup.TotalPowerPoints }}<br>
-                                <label>Remaining Power Points: &nbsp;</label>{{ .setup.RemainingPowerPoints }}
+                                <label>Remaining Power Points: &nbsp;</label><span id="remaining-pp">{{ .setup.RemainingPowerPoints }}</span>
                             </div>
                             <div class="col-lg-offset-1 col-lg-10">
 								<form action="/pp-rest" method="post">
@@ -58,12 +58,12 @@
 					                                            <a data-toggle="collapse" class="col-lg-6" data-parent="#level-{{ $level }}-accordian" data-target="#spell-{{ $level }}-{{ $spell.Id }}-colapse" style="cursor:pointer;">
 					                                                {{ $spell.Name }}
 					                                            </a>
-																<form class="pull-right col-lg-4" action="/pp-cast" method="post">
+																<form class="pull-right col-lg-4 cast" action="/pp-cast" method="post">
 																	<input type="hidden" name="setupId" value="{{ $setup.Id }}">
                                                                 	<div class="input-group input-group-sm">
                                                                     	<input type="text" name="pp" class="form-control" placeholder="Points">
                                                                     	<span class="input-group-btn">
-                                                                        	<button class="btn btn-default" {{if lt $setup.RemainingPowerPoints 1 }}disabled="disabled"{{ end }}>Cast</button>
+                                                                        	<button class="btn btn-default cast" {{if lt $setup.RemainingPowerPoints 1 }}disabled="disabled"{{ end }}>Cast</button>
                                                                     	</span>
                                                                 	</div>
 																</form>
@@ -112,35 +112,30 @@
 		{{ template "scripts.tmpl" }}
 		<script src="/static/js/util.js" charset="utf-8"></script>
 		<script type="text/javascript">
-			// $(document).ready(function() {
-			// 	$('input.prepare').click(function() {
-			// 		level =+ $(this).attr('data-level');
-			// 		spellId =+ $(this).attr('data-spell-id');
-			// 		if (this.checked) {
-			// 			prepared[level].push(spellId);
-			// 			console.log(prepared[level].length == spd[level]);
-			// 			if (prepared[level].length == spd[level]) {
-			// 				cboxes = $('input.prepare-' + level);
-			// 				for (var i = 0; i < cboxes.length; i++) {
-			// 					if (!cboxes[i].checked) {
-			// 						$(cboxes[i]).attr('disabled', 'disabled');
-			// 					}
-			// 				}
-			// 			}
-			// 		} else {
-			// 			prepared[level] = removeValue(prepared[level], spellId);
-			// 			if (prepared[level].length < spd[level]) {
-			// 				$('input.prepare-' + level).removeAttr('disabled');
-			// 			}
-			// 		}
-			// 	});
-			// 	$('button#rest').click(function(e) {
-			// 		e.preventDefault();
-			// 		$('input[name="prepared"]').val(JSON.stringify(prepared));
-			// 		console.log($('input[name="prepared"]').val());
-			// 		$('form#rest').submit();
-			// 	});
-			// });
+
+			$(document).ready(function() {
+				$('form.cast').submit(function(e) {
+					e.preventDefault();
+					$.ajax({
+			            type: 'POST',
+			            url: '/pp-cast',
+			            data: $(this).serialize(),
+			            success: function(resp) {
+			                if (!resp.success) {
+			                    showError(resp.msg);
+			                    return
+			                }
+							$('span#remaining-pp').text(resp.remaining);
+							if (resp.remaining < 1) {
+								$('button.cast').attr('disabled', 'disabled');
+							}
+			            },
+			            error: function() {
+			                showError("Error casting spell");
+			            }
+			        });
+				});
+			});
 		</script>
 	</body>
 </html>

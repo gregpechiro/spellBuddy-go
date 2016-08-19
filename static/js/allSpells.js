@@ -93,7 +93,7 @@ function genResults(filteredSpells) {
                             ((spell.descriptors !== '' && spell.descriptors !== undefined) ? '<span> [' + spell.descriptors + ']</span>' : '') +
                         '</h4>' +
                         ((spell.rulebook !== '' && spell.rulebook !== undefined) ? '<p>' +
-                            spell.rulebook + ((spell.page !== 0 ) ? '<span> p. ' + spell.page + '</span>' : '') +
+                            spell.rulebook + ((spell.page !== 0 && spell.page !== undefined) ? '<span> p. ' + spell.page + '</span>' : '') +
                         '</p>' : '') +
                         '<table>' +
                             '<tbody>' +
@@ -143,7 +143,7 @@ function genResults(filteredSpells) {
             url: '/user/addSpell',
             data: $(this).serialize(),
             success: function(resp) {
-                console.log(resp)
+                //console.log(resp)
                 if (!resp.success) {
                     showError(resp.msg);
                     return;
