@@ -1,5 +1,6 @@
 
 function search() {
+    page = 0;
     if (searchText != '') {
         if (spells.length > 0) {
             spellSet = spells.filter(filterSearch);

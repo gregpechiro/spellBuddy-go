@@ -388,10 +388,10 @@ a:hover, a:active, a:focus:active, a:focus {
 
 /* admin table */
 
-.table-striped>tbody>tr:nth-of-type(odd) {
+.admin.table-striped>tbody>tr:nth-of-type(odd) {
     background-color: #7c2e06;
 }
 
-table {
+table.admin {
     background-color: rgba(115,35,1,.65);
 }
