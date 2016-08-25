@@ -131,6 +131,9 @@
         </div>
 
         {{ template "scripts.tmpl" }}
+
+		{{ template "timeout.tmpl" . }}
+
 		<script type="text/javascript">
 			var userId = '{{ .user.Id }}';
 			var letter = 'a';
